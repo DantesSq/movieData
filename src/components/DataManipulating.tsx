@@ -1,24 +1,14 @@
 import React from "react";
-import { ExcelData } from "../types/types";
-import { throttleRequestTMDB } from "../utils/getTmdb";
-import * as XLSX from "xlsx";
 import { throttleRequestMetadata } from "../utils/getMetadataTmdb";
 import { throttleRequestPersons } from "../utils/getPersons";
-import { throttleRequestSeries } from "../utils/getSeries";
-import { useAppDispatch, useAppSelector } from "../store/store";
-import { throttleRequestTitles } from "../utils/getTranslations";
+import { useAppSelector } from "../store/store";
 import { throttleRequestSeriesDirector } from "../utils/getSeriesDirectors";
-import { setIsProcessing, updateFile } from "../store/features/filesSlice";
 import { writeFile } from "../utils/writeFile";
 import RequestButton from "./RequestButton";
-import { getLicenseDate } from "../utils/getLicenseDate";
+import Translations from "./Translations";
 
 const DataManipulating = () => {
   const { currentFile, isProcessing } = useAppSelector((state) => state.files);
-
-  const dispatch = useAppDispatch();
-
-  const [updatedFileData, setUpdatedFileData] = React.useState<ExcelData[]>([]);
   const [openTranslations, setOpenTranslations] = React.useState(false);
 
   if (!currentFile) return <></>;
@@ -45,15 +35,15 @@ const DataManipulating = () => {
           >
             Get Translations
           </button>
-          {openTranslations ? (
-            <RequestButton
-              text="Get Translations"
-              requestFunction={throttleRequestTitles}
-              classes="w-full btn-locked"
-            />
-          ) : (
-            <></>
-          )}
+          <div
+            className={
+              openTranslations
+                ? `space-y-[25px] items-center flex flex-col w-full`
+                : "hidden"
+            }
+          >
+            <Translations />
+          </div>
         </div>
         {/* <div className="w-full">
           <RequestButton

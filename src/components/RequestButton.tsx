@@ -11,23 +11,29 @@ import {
 interface RequestButtonProps {
   classes?: string;
   text: string;
-  requestFunction: (
+  requestFunction?: (
     excelData: ExcelData[],
     setUpdatedFile: any
   ) => Promise<void>;
+  requestTranslation?: (
+    excelData: ExcelData[],
+    setUpdatedFile: any,
+    languages: string[] | undefined
+  ) => Promise<void>;
+  disabled?: boolean;
+  languages?: string[];
 }
 
 const RequestButton: React.FC<RequestButtonProps> = ({
   text,
   requestFunction,
   classes,
+  disabled,
+  requestTranslation,
+  languages,
 }) => {
   const { currentFile, isProcessing } = useAppSelector((state) => state.files);
   const tmdb_requested = currentFile?.tmdb_requested;
-
-  React.useEffect(() => {
-    console.log(isProcessing, "isProcessing");
-  }, [isProcessing]);
 
   const dispatch = useAppDispatch();
 
@@ -37,12 +43,18 @@ const RequestButton: React.FC<RequestButtonProps> = ({
   const [start, setStart] = React.useState(false);
 
   React.useEffect(() => {
-    console.log(start, "start", tmdb_requested);
     if (start && tmdb_requested) {
-      console.log("inside throttleFunction", currentFile);
-
       const throttleRequest = async () => {
-        await requestFunction(currentFile.data, setUpdatedFileData);
+        if (requestFunction) {
+          await requestFunction(currentFile.data, setUpdatedFileData);
+        } else if (requestTranslation) {
+          await requestTranslation(
+            currentFile.data,
+            setUpdatedFileData,
+            languages
+          );
+        }
+
         setStart(false);
         dispatch(setIsProcessing(false));
       };
@@ -52,9 +64,7 @@ const RequestButton: React.FC<RequestButtonProps> = ({
   }, [start, tmdb_requested]);
 
   React.useEffect(() => {
-    console.log("update current file", updatedFileData);
     if (!isProcessing && updatedFileData.length && currentFile && !start) {
-      console.log("dispatch update current file", isProcessing);
       dispatch(
         updateFile({
           file: { ...currentFile, data: updatedFileData },
@@ -64,8 +74,6 @@ const RequestButton: React.FC<RequestButtonProps> = ({
     }
   }, [isProcessing, updatedFileData, start]);
 
-  console.log(start);
-
   React.useEffect(() => {
     if (
       requestedTmdb &&
@@ -73,7 +81,6 @@ const RequestButton: React.FC<RequestButtonProps> = ({
       currentFile &&
       !tmdb_requested
     ) {
-      console.log("dispatch tmdb");
       dispatch(
         updateFile({
           file: { ...currentFile, data: updatedFileData, tmdb_requested: true },
@@ -86,10 +93,9 @@ const RequestButton: React.FC<RequestButtonProps> = ({
   const checkTmdb = async () => {
     if (!tmdb_requested && currentFile) {
       await throttleRequestTMDB(currentFile.data, setUpdatedFileData);
-      console.log("after await tmdb");
+
       setRequestedTmdb(true);
     }
-    console.log("here setStart");
   };
 
   return (
@@ -97,13 +103,11 @@ const RequestButton: React.FC<RequestButtonProps> = ({
       <button
         className={`btn ${classes}`}
         onClick={async () => {
-          // start processing here
           dispatch(setIsProcessing(true));
           await checkTmdb();
-          console.log("setStart1");
           setStart(true);
-          console.log("setStart");
         }}
+        disabled={disabled}
       >
         {text}
       </button>

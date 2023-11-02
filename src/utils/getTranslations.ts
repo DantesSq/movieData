@@ -1,19 +1,28 @@
 import axios from "axios";
 import { ExcelData, Translation } from "../types/types";
 
-const getTranslatedTitle = async (movie: ExcelData, setUpdatedFile: (updateFunction: (prev: ExcelData[]) => ExcelData[])=>void) => {
+const getTranslatedTitle = async (movie: ExcelData, setUpdatedFile: (updateFunction: (prev: ExcelData[]) => ExcelData[])=>void, languages: string[]) => {
     const {tmdb_id, spi_code, type, Synopsis} = movie
+
+    const emptyTitleKeys = languages.map(item=>{return {[`Title ${item}`]: ' '}})
+    const emptySynopsisKeys = languages.map(item=>{return {[`Synopsis ${item}`]: ' '}})
+    const spreadEmptyTitle = Object.assign({}, ...emptyTitleKeys)
+    const spreadEmptySynopsis = Object.assign({}, ...emptySynopsisKeys)
     if (!tmdb_id) {
-      setUpdatedFile((prev: ExcelData[]) => [
+      console.log(spreadEmptyTitle)
+      setUpdatedFile((prev: any) => [
         ...prev,
         { ...movie,
-        Status: 'no tmdb'},
+        Status: 'no tmdb',
+        ...spreadEmptyTitle,
+        ...spreadEmptySynopsis
+      },
       ]);
       return;
     }
     let urlType
     if (type?.toLowerCase() === `series` || spi_code?.startsWith(`SPY`)) {urlType = `tv`} else {urlType='movie'}
-    console.log(urlType, spi_code, type)
+
     try {
       const options = {
         method: "GET",
@@ -28,29 +37,44 @@ const getTranslatedTitle = async (movie: ExcelData, setUpdatedFile: (updateFunct
       const response = await axios(options);
       const translations: Translation[]  = response.data.translations;
       
-      const translatedTitle = translations.filter((item:Translation)=>item.iso_3166_1==="NL")[0]
-      const title = translations.filter((item:Translation)=>item.iso_3166_1==="US")[0]
-      const newSynopsis = (title.data && title.data.overview) ? title.data.overview : ''
-      const translated_synopsis = (translatedTitle.data && translatedTitle.data.overview) ? translatedTitle.data.overview : ''
-      const title_translated = (translatedTitle.data && (type?.toLowerCase() === 'series' ? translatedTitle.data.name : translatedTitle.data.title)) ? (type?.toLowerCase() === 'series' ? translatedTitle.data.name : translatedTitle.data.title) : ""
+      const filteredTranslations = translations.filter(translation =>
+        languages.includes(translation.iso_3166_1)
+    );
+    console.log(filteredTranslations, tmdb_id)
+        const titleKeys = languages.map(item=>{
+          const translation = filteredTranslations.find(translation => translation.iso_3166_1 === item);
+        const key = `Title ${item}`;
+        const value = translation ? translation?.data?.name || translation?.data?.title || '' : '';
+        const result = {[key]: value};
+         return result
+        })
+        const synopsisKeys = languages.map(item=>{
+          return {[`Synopsis ${item}`]: filteredTranslations.find(translation => translation.iso_3166_1 === item)?.data?.overview || ''}
+        })
+        const spreadTitleKeys = Object.assign({}, ...titleKeys)
+        const spreadSynopsisKeys = Object.assign({}, ...synopsisKeys)
 
-      setUpdatedFile((prev: any) => [
+      setUpdatedFile((prev) => [
         ...prev,
         {
-          ...movie, Synopsis: Synopsis || newSynopsis, title_translated: title_translated, Synopsis_translated: translated_synopsis,
+          ...movie, ...spreadTitleKeys, ...spreadSynopsisKeys
+          // ...titleKeys, ...synopsisKeys
+          // ...movie, Synopsis: Synopsis || newSynopsis, title_translated: title_translated, Synopsis_translated: translated_synopsis,
         },
       ]);
     } catch (error) {
       setUpdatedFile((prev: any) => [
         ...prev,
         { ...movie,
-      Status: 'Error when getting TMDB Data', translated_title: ""},
+      Status: 'Error when getting TMDB Data', ...spreadEmptyTitle,
+      ...spreadEmptySynopsis},
       ]);
     }
   };
 
-export  const throttleRequestTitles = async (excelData: ExcelData[], setDownloadData: (arg: any)=>void) => {
+export  const throttleRequestTranslation = async (excelData: ExcelData[], setDownloadData: (arg: any)=>void, languages: string[] | undefined) => {
     let index = 0;
+    if (!languages) return
     const checkTranslatedTitles = async () => {
       if (index >= excelData.length){
         return;
@@ -58,7 +82,7 @@ export  const throttleRequestTitles = async (excelData: ExcelData[], setDownload
       console.log(`process... ${index + 1}/${excelData.length}`);
       const item = excelData[index];
       index++;
-      await getTranslatedTitle(item, setDownloadData);
+      await getTranslatedTitle(item, setDownloadData, languages);
       await checkTranslatedTitles();
     };
 

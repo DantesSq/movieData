@@ -4,7 +4,7 @@ import { ExcelData } from "../types/types";
 const getTMDB = async (movie: ExcelData, setUpdatedFile: (updateFunction: (prev: ExcelData[]) => ExcelData[])=>void)=>{
     const {imdb_id, tmdb_id, type, spi_code} = movie
     
-    const corrImdb = imdb_id?.slice(imdb_id?.indexOf('/tt')+1)
+    const corrImdb = imdb_id?.toString().slice(imdb_id?.toString().indexOf('/tt')+1)
     const ttId = corrImdb?.indexOf('/')===-1 ? corrImdb : corrImdb?.slice(0, corrImdb?.indexOf('/'))
 
     if (tmdb_id || !imdb_id || !ttId) {
