@@ -10,7 +10,7 @@ import Translations from "./Translations";
 const DataManipulating = () => {
   const { currentFile, isProcessing } = useAppSelector((state) => state.files);
   const [openTranslations, setOpenTranslations] = React.useState(false);
-
+  const [cat, setCat] = React.useState(false);
   if (!currentFile) return <></>;
 
   return (
@@ -63,6 +63,16 @@ const DataManipulating = () => {
           <button
             className="btn w-full"
             onClick={() => {
+              setCat((prev) => !prev);
+            }}
+          >
+            Special For Monia
+          </button>
+        </div>
+        <div className="w-full">
+          <button
+            className="btn w-full"
+            onClick={() => {
               writeFile(currentFile);
             }}
           >
@@ -84,6 +94,15 @@ const DataManipulating = () => {
           alt="processing data..."
         />
         <h1>Processing data...</h1>
+      </div>
+
+      <div className={cat ? "" : "hidden"}>
+        <img
+          className="w-[500px] h-[500px]"
+          src="https://media4.giphy.com/media/ule4vhcY1xEKQ/giphy.gif?cid=ecf05e47s96k6evjuw3o2segnf27o7twfqdo4zn6uhc8e9wv&ep=v1_gifs_search&rid=giphy.gif&ct=g"
+          alt="processing data..."
+        />
+        <h1>Meow meow meow...</h1>
       </div>
     </>
   );
