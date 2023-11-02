@@ -1,0 +1,99 @@
+{
+    "ProgramId": 5833033,
+    "SeriesId": null,
+    "Title": "The Current War",
+    "MoreTitles": [
+      {
+        "Title": "The Current War",
+        "Abbreviation": null,
+        "Type": "International Title",
+        "TypeId": 17167,
+        "Language": "English",
+        "LanguageId": 9170,
+        "IsVisible": true,
+        "IsMain": true,
+        "Id": 11791834,
+        "IdKey": "TitleRef"
+      }
+    ],
+    "IsTitleVersion": true,
+    "IsOriginalTitleVersion": true,
+    "VersionType": "INTERNATIONAL",
+    "VersionTypeId": 15426,
+    "Number": "SPI108750",
+    "MoreNumbers": [
+      {
+        "Number": "SPI108750",
+        "Type": "Program Version Number",
+        "TypeId": 15771,
+        "IsReadOnly": false,
+        "IsMain": true,
+        "Comment": null,
+        "Id": 11791835,
+        "IdKey": "NumberRef"
+      }
+    ],
+    "Sequences": [],
+    "Duration": 103,
+    "ParentalRating": "NL 12",
+    "ParentalRatingId": 17871,
+    "Language": "English",
+    "LanguageId": 9170,
+    "Sound": null,
+    "SoundId": null,
+    "Image": null,
+    "ImageId": null,
+    "AiringDate": null,
+    "OriginalVersionTitle": "The Current War",
+    "OriginalVersionTitleId": 11791831,
+    "Comment": null,
+    "Channels": [
+      {
+        "ChannelId": 17393,
+        "Name": "Film1 Family NL",
+        "Id": 10086999,
+        "IdKey": "ChannelRef"
+      },
+      {
+        "ChannelId": 17390,
+        "Name": "Film1 Premiere NL",
+        "Id": 10086997,
+        "IdKey": "ChannelRef"
+      },
+      {
+        "ChannelId": 17397,
+        "Name": "FilmBox NL",
+        "Id": 10087001,
+        "IdKey": "ChannelRef"
+      },
+      {
+        "ChannelId": 17395,
+        "Name": "Film1 Action NL",
+        "Id": 10087000,
+        "IdKey": "ChannelRef"
+      },
+      {
+        "ChannelId": 17392,
+        "Name": "Film1 Drama NL",
+        "Id": 10086998,
+        "IdKey": "ChannelRef"
+      }
+    ],
+    "Attributes": [],
+    "Materials": [],
+    "Assets": [
+      {
+        "AssetPositionId": 2372856,
+        "Name": "30008392",
+        "Number": "30008392",
+        "Type": "mxf",
+        "TypeId": 17886,
+        "Id": 6246056,
+        "IdKey": "AssetRef"
+      }
+    ],
+    "PersonsFirms": [],
+    "LastModified": "2022-11-18T06:03:36",
+    "Id": 5834833,
+    "IdKey": "Programversion"
+  }
