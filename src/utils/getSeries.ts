@@ -11,15 +11,12 @@ const getSeriesRequest = async (
       ...prev,
       { ...movie, Status: "problem with Title" },
     ]);
-    console.log("problem with series_title");
     return;
   }
 
   try {
-    console.log("hola");
     const response = await axios(`https://imdb-api.xeronles.workers.dev/search?query=${series_title}`);
     const results = response.data.results
-    console.log(results, series_title)
     // debugger
     if (!results.length) {
         setUpdatedFile((prev: any) => [

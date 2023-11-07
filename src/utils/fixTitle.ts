@@ -130,8 +130,5 @@ export const titleNormalizer = (titlesArr: string[]) => {
       (title) => title.bracketsValue
     );
   
-    console.log("oldTitles:", oldTitlesArr);
-    console.log("newTitlesArr:", newTitlesArr);
-    console.log("bracketsValuesArr:", bracketsValuesArr);
-  };
+}
   

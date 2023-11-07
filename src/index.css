@@ -7,6 +7,18 @@
     @apply bg-primary text-white rounded-sm active:opacity-100 hover:opacity-95 opacity-90 h-10;
 }
 
+.h12 {
+    @apply h-12
+}
+
+.btn-cancel {
+    @apply text-[#344054] bg-white border-[#d0d5dd] border-[1px] hover:bg-gray-50 active:bg-gray-100 text-lg
+}
+
+.btn-menu {
+@apply rounded-lg w-[160px] h-11
+}
+
 .btn-locked{
     @apply opacity-20 cursor-not-allowed hover:opacity-20
 }

@@ -7,7 +7,6 @@ const getMetadataFromTMDB = async (movie: ExcelData, setUpdatedFile: (updateFunc
     for (const key of metadataOptions) {
       emptyOptionsObj[key] = '';
     }
-    console.log(emptyOptionsObj)
     if (!tmdb_id) {
       setUpdatedFile((prev: ExcelData[]) => [
         ...prev,
@@ -111,7 +110,6 @@ const getMetadataFromTMDB = async (movie: ExcelData, setUpdatedFile: (updateFunc
           ['eu']: ''
       }
       const result: { [key: string]: string } = {};
-      console.log(result)
     if (metadataOptions) {
     for (const option of metadataOptions) {
     if (keys.hasOwnProperty(option)) {

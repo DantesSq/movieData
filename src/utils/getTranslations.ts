@@ -9,7 +9,6 @@ const getTranslatedTitle = async (movie: ExcelData, setUpdatedFile: (updateFunct
     const spreadEmptyTitle = Object.assign({}, ...emptyTitleKeys)
     const spreadEmptySynopsis = Object.assign({}, ...emptySynopsisKeys)
     if (!tmdb_id) {
-      console.log(spreadEmptyTitle)
       setUpdatedFile((prev: any) => [
         ...prev,
         { ...movie,
@@ -40,7 +39,6 @@ const getTranslatedTitle = async (movie: ExcelData, setUpdatedFile: (updateFunct
       const filteredTranslations = translations.filter(translation =>
         languages.includes(translation.iso_3166_1)
     );
-    console.log(filteredTranslations, tmdb_id)
         const titleKeys = languages.map(item=>{
           const translation = filteredTranslations.find(translation => translation.iso_3166_1 === item);
         const key = `Title ${item}`;
@@ -58,8 +56,6 @@ const getTranslatedTitle = async (movie: ExcelData, setUpdatedFile: (updateFunct
         ...prev,
         {
           ...movie, ...spreadTitleKeys, ...spreadSynopsisKeys
-          // ...titleKeys, ...synopsisKeys
-          // ...movie, Synopsis: Synopsis || newSynopsis, title_translated: title_translated, Synopsis_translated: translated_synopsis,
         },
       ]);
     } catch (error) {

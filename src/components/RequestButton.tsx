@@ -101,7 +101,7 @@ const RequestButton: React.FC<RequestButtonProps> = ({
   return (
     <>
       <button
-        className={`btn ${classes}`}
+        className={`btn h12 ${classes}`}
         onClick={async () => {
           dispatch(setIsProcessing(true));
           await checkTmdb();

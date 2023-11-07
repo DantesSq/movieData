@@ -11,7 +11,6 @@ const getPersonsRequest = async (
       ...prev,
       { ...movie, Status: "problem with tmdbId", director: '', cast: ''},
     ]);
-    console.log("problem with tmdbId");
     return;
   }
 

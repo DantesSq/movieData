@@ -23,7 +23,6 @@ const getTMDB = async (movie: ExcelData, setUpdatedFile: (updateFunction: (prev:
 
       try {
         const response = await axios(options);
-        console.log(response, ttId)
         let id: string | null
         if (type?.toLowerCase() === `series` || spi_code?.startsWith(`SPY`)){
           id = response.data.tv_results[0].id
@@ -39,10 +38,9 @@ const getTMDB = async (movie: ExcelData, setUpdatedFile: (updateFunction: (prev:
 
 export const throttleRequestTMDB = async (excelData: ExcelData[], setUpdatedFile: any) => {
     let index = 0;
-    console.log('tmdb')
     const sendRequest = async () => {
         if (index < excelData.length) {
-          console.log(index, excelData.length)
+          console.log(index+1, excelData.length)
         const item = excelData[index];
         await getTMDB(item, setUpdatedFile);
             index++;

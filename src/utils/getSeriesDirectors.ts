@@ -20,7 +20,6 @@ const getSeasonsDirectorsRequest = async (
           director: "",
         },
       ]);
-    console.log("problem with tmdbId");
     return;
   }
 
@@ -46,10 +45,8 @@ for (id; seasonExists; id++) {
     try {
         const response = await axios(options)
         const data: Season = response.data
-        console.log(id, data)
         if (data.episodes) 
         data.episodes.forEach((episode, id)=>{
-          console.log(episode)
             const directors = episode.crew.filter(person=>person.job==='Director')
             const directors_names = directors.map((director) => director.name).join(", ")
             const year =  episode.air_date.slice(0, 4)
