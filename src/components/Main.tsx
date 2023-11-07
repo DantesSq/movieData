@@ -6,6 +6,7 @@ import UploadFile from "./UploadFile";
 
 import {
   changeOpenMenu,
+  resetFiles,
   setCurrentFile,
   submitRawFile,
 } from "../store/features/filesSlice";
@@ -176,7 +177,15 @@ const Main = () => {
         <>
           {currentFile ? (
             <div className="">
-              <h1 className="text-lg">Current File</h1>
+              <div className="flex justify-between">
+                <h1 className="text-lg">Current File</h1>
+                <h2
+                  onClick={() => dispatch(resetFiles())}
+                  className="text-[15px] text-purple-800 underline hover:cursor-pointer hover:text-purple-700 active:text-purple-600"
+                >
+                  Upload new file
+                </h2>
+              </div>
               <select className="w-full h-12 rounded-xs bg-gray-200 text-center mb-[50px]">
                 <option value={currentFile?.index}>{currentFile.name}</option>
                 {files.map((file) => {

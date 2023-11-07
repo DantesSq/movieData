@@ -87,10 +87,17 @@ export const FileSlice = createSlice({
         }, 
         setIsProcessing: (state, action: PayloadAction<boolean>)=>{
             state.isProcessing=action.payload
+        },
+        resetFiles: (state)=>{
+            state.rawFiles=[]
+    state.files=[]
+    state.openMenu= true
+    state.isProcessing=false
+    state.currentFile=null
         }
     }
 })
 
 export default FileSlice.reducer
 
-export const {setRawFiles, addRawFiles, removeRawFiles, submitRawFile, changeOpenMenu, setCurrentFile, updateFile, requestTmdb, setIsProcessing} = FileSlice.actions
+export const {setRawFiles, addRawFiles, removeRawFiles, submitRawFile, changeOpenMenu, setCurrentFile, updateFile, requestTmdb, setIsProcessing, resetFiles} = FileSlice.actions
