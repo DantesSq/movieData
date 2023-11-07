@@ -1,12 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 import filesSlice from "./features/filesSlice";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
-import languagesSlice from "./features/languagesSlice";
+import requestOptionsSlice from "./features/requestOptionsSlice";
 
 export const store = configureStore({
     reducer:{
         files:filesSlice,
-        languages:languagesSlice
+        options:requestOptionsSlice,
     }
 })
 

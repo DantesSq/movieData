@@ -1,17 +1,17 @@
 import axios from "axios";
 import { ExcelData, tmdbMovieDetails, tmdbSeriesDetails } from "../types/types";
-
-const getMetadataFromTMDB = async (movie: ExcelData, setUpdatedFile: (updateFunction: (prev: ExcelData[]) => ExcelData[])=>void) => {
-    const {tmdb_id, genre, country, production_year, director,cast, duration, type, spi_code} = movie
+const getMetadataFromTMDB = async (movie: ExcelData, setUpdatedFile: (updateFunction: (prev: ExcelData[]) => ExcelData[])=>void, metadataOptions: string[] | undefined) => {
+    const {tmdb_id, genre, country, production_year, director,cast, duration, type, spi_code, Synopsis} = movie
+    if (!metadataOptions) return
+    const emptyOptionsObj: any = {}
+    for (const key of metadataOptions) {
+      emptyOptionsObj[key] = '';
+    }
+    console.log(emptyOptionsObj)
     if (!tmdb_id) {
       setUpdatedFile((prev: ExcelData[]) => [
         ...prev,
-        { ...movie, 
-          production_year: ' ',
-          country: ' ',
-          duration: ' ',
-          genre: ' ',
-          Synopsis: ' ',
+        { ...movie, ...emptyOptionsObj,
         Status: 'no tmdb'},
       ]);
       return;
@@ -34,23 +34,42 @@ const getMetadataFromTMDB = async (movie: ExcelData, setUpdatedFile: (updateFunc
       // SERIES DATA 
       const data: tmdbSeriesDetails = response.data;
       const title = data.original_name
-      const Synopsis = data.overview
-      const duration = data.episode_run_time[0]
+      const tmdbSynopsis = data.overview
+      const tmdbDuration = data.episode_run_time[0]
       const tmdbGenres = data.genres.map((item) => item.name).join(", ");
       const tmdbCountries = data.production_countries
       .map((item) => item.name)
-        .join(", ");
-        const tmdbYear = Number(data.first_air_date.slice(0, 4));
-        const original_language = data.original_language
-setUpdatedFile((prev: any) => [
+      .join(", ");
+      const tmdbCompanies = data.production_companies
+      .map((item) => item.name)
+      .join(", ");
+      const tmdbYear = Number(data.first_air_date.slice(0, 4));
+      const original_language = data.original_language
+
+      const keys: any = {
+        ['production_year']: production_year || tmdbYear || '',
+        ['country']: country || tmdbCountries || '',
+        ['genre']: genre || tmdbGenres || '',
+        ['duration']: duration || tmdbDuration || '',
+        ['synopsis']: Synopsis || tmdbSynopsis || '',
+        ['original_title']: title || '',
+        ['original_language']: original_language || '',
+        ['production_companies']: tmdbCompanies || '',
+        ['eu']: ''
+    }
+
+    const result: { [key: string]: string } = {};
+  if (metadataOptions) {
+  for (const option of metadataOptions) {
+  if (keys.hasOwnProperty(option)) {
+    result[option] = keys[option];
+  }}}
+
+      setUpdatedFile((prev: any) => [
         ...prev,
         {
           ...movie,
-          production_year: production_year || tmdbYear,
-          country: country || tmdbCountries,
-          genre: genre || tmdbGenres,
-          duration: duration,
-          Synopsis: Synopsis || '',
+         ...result
         },
       ]);
       } else {
@@ -69,24 +88,42 @@ setUpdatedFile((prev: any) => [
       const data: tmdbMovieDetails = response.data;
       
       const title = data.original_title
-      const Synopsis = data.overview
+      const tmdbSynopsis = data.overview
       const tmdbGenres = data.genres.map((item) => item.name).join(", ");
       const tmdbCountries = data.production_countries
       .map((item) => item.name)
         .join(", ");
+        const tmdbCompanies = data.production_companies
+      .map((item) => item.name)
+      .join(", ");
         const tmdbDuration = data.runtime;
         const tmdbYear = Number(data.release_date.slice(0, 4));
         const original_language = data.original_language
+        const keys: any = {
+          ['production_year']: production_year || tmdbYear || '',
+          ['country']: country || tmdbCountries || '',
+          ['genre']: genre || tmdbGenres || '',
+          ['duration']: duration || tmdbDuration || '',
+          ['synopsis']: Synopsis || tmdbSynopsis || '',
+          ['original_title']: title || '',
+          ['original_language']: original_language || '',
+          ['production_companies']: tmdbCompanies || '',
+          ['eu']: ''
+      }
+      const result: { [key: string]: string } = {};
+      console.log(result)
+    if (metadataOptions) {
+    for (const option of metadataOptions) {
+    if (keys.hasOwnProperty(option)) {
+      result[option] = keys[option];
+    }}}
 
+  
       setUpdatedFile((prev: any) => [
         ...prev,
         {
           ...movie,
-          production_year: production_year || tmdbYear,
-          country: country || tmdbCountries,
-          duration: duration || tmdbDuration,
-          genre: genre || tmdbGenres,
-          Synopsis: Synopsis || '', 
+          ...result
         },
       ]);
       }
@@ -96,17 +133,13 @@ setUpdatedFile((prev: any) => [
       setUpdatedFile((prev: any) => [
         ...prev,
         { ...movie, 
-          // production_year: '',
-        // country: '',
-        // duration: '',
-        // genre: '',
-        // Synopsis: '',
+          ...emptyOptionsObj,
       Status: 'Error when getting TMDB Data' },
       ]);
     }
   };
 
-export  const throttleRequestMetadata = async (excelData: ExcelData[], setUpdatedFile: (arg: any)=>void) => {
+export  const throttleRequestMetadata = async (excelData: ExcelData[], setUpdatedFile: (arg: any)=>void, options: string[] | undefined) => {
     let index = 0;
     const checkMetaData = async () => {
       if (index >= excelData.length){
@@ -114,7 +147,7 @@ export  const throttleRequestMetadata = async (excelData: ExcelData[], setUpdate
       }
       console.log(`process... ${index + 1}/${excelData.length}`);
       const item = excelData[index];
-      await getMetadataFromTMDB(item, setUpdatedFile);
+      await getMetadataFromTMDB(item, setUpdatedFile, options);
       index++;
       await checkMetaData();
     };

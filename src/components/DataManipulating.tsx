@@ -6,34 +6,51 @@ import { throttleRequestSeriesDirector } from "../utils/getSeriesDirectors";
 import { writeFile } from "../utils/writeFile";
 import RequestButton from "./RequestButton";
 import Translations from "./Translations";
+import Metadata from "./Metadata";
 
 const DataManipulating = () => {
   const { currentFile, isProcessing } = useAppSelector((state) => state.files);
   const [openTranslations, setOpenTranslations] = React.useState(false);
+  const [openMetadata, setOpenMetadata] = React.useState(false);
   const [cat, setCat] = React.useState(false);
   if (!currentFile) return <></>;
 
   return (
-    <>
+    <div className="w-[500px]">
       <div className={isProcessing ? "hidden" : "space-y-[50px]"}>
         <div className="space-x-[25px]">
           <RequestButton
             text="Get Directors & Cast"
             requestFunction={throttleRequestPersons}
-            classes="w-[250px]"
+            classes="w-full"
           />
-          <RequestButton
-            text="Get Metadata"
-            requestFunction={throttleRequestMetadata}
-            classes="w-[250px]"
-          />
+        </div>
+
+        <div className="space-y-[25px] items-center flex flex-col w-full">
+          <button
+            className="btn w-full"
+            onClick={() => {
+              setOpenMetadata((prev) => !prev);
+            }}
+          >
+            MetaData
+          </button>
+          <div
+            className={
+              openMetadata
+                ? `space-y-[25px] items-center flex flex-col w-full`
+                : "hidden"
+            }
+          >
+            <Metadata />
+          </div>
         </div>
         <div className="space-y-[25px] items-center flex flex-col">
           <button
             className="btn w-full"
             onClick={() => setOpenTranslations((prev) => !prev)}
           >
-            Get Translations
+            Translations
           </button>
           <div
             className={
@@ -45,13 +62,6 @@ const DataManipulating = () => {
             <Translations />
           </div>
         </div>
-        {/* <div className="w-full">
-          <RequestButton
-            text="Search Series"
-            requestFunction={throttleRequestSeries}
-            classes="w-[250px]"
-          />
-        </div> */}
         <div className="w-full">
           <RequestButton
             text="Series Metadata for Each Episode"
@@ -104,7 +114,7 @@ const DataManipulating = () => {
         />
         <h1>Meow meow meow...</h1>
       </div>
-    </>
+    </div>
   );
 };
 

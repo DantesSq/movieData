@@ -76,6 +76,12 @@ type production_country = {
     name: string;
   };
 
+type production_company = {
+  id: number
+  name: string
+  origin_country: string
+}
+
 export interface tmdbMovieDetails {
     id: number;
     imdb_id: string;
@@ -83,6 +89,7 @@ export interface tmdbMovieDetails {
     original_title: string;
     genres: genre[];
     production_countries: production_country[];
+    production_companies: production_company[]
     runtime: number;
     release_date: string;
     overview: string
@@ -97,7 +104,8 @@ export interface tmdbSeriesDetails {
   original_name: string // original title
 
   genres: genre[]
-  production_countries: production_country[]
+  production_countries: production_country[];
+    production_companies: production_company[]
 
   first_air_date: string
   last_air_date: string

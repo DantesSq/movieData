@@ -15,13 +15,13 @@ interface RequestButtonProps {
     excelData: ExcelData[],
     setUpdatedFile: any
   ) => Promise<void>;
-  requestTranslation?: (
+  requestWithOptions?: (
     excelData: ExcelData[],
     setUpdatedFile: any,
-    languages: string[] | undefined
+    options: string[] | undefined
   ) => Promise<void>;
   disabled?: boolean;
-  languages?: string[];
+  options?: string[];
 }
 
 const RequestButton: React.FC<RequestButtonProps> = ({
@@ -29,8 +29,8 @@ const RequestButton: React.FC<RequestButtonProps> = ({
   requestFunction,
   classes,
   disabled,
-  requestTranslation,
-  languages,
+  requestWithOptions,
+  options,
 }) => {
   const { currentFile, isProcessing } = useAppSelector((state) => state.files);
   const tmdb_requested = currentFile?.tmdb_requested;
@@ -47,11 +47,11 @@ const RequestButton: React.FC<RequestButtonProps> = ({
       const throttleRequest = async () => {
         if (requestFunction) {
           await requestFunction(currentFile.data, setUpdatedFileData);
-        } else if (requestTranslation) {
-          await requestTranslation(
+        } else if (requestWithOptions) {
+          await requestWithOptions(
             currentFile.data,
             setUpdatedFileData,
-            languages
+            options
           );
         }
 

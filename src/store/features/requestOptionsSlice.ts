@@ -1,7 +1,5 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit"
 
-export {}
-
 type language ={
     english_name: string
     iso_639_1: string
@@ -9,8 +7,16 @@ type language ={
     checked: boolean
 }
 
+type metadataItem = {
+    name: string
+    checked: boolean
+    key: string
+}
+
 interface LanguagesState {
     languages: language[][]
+    main_data: metadataItem[]
+    secondary_data: metadataItem[]
 }
 
 const initialState: LanguagesState = {
@@ -37,12 +43,25 @@ const initialState: LanguagesState = {
             { english_name: 'Portuguese', iso_639_1: 'pt', iso_3166_1: 'PT', checked: false },
             { english_name: 'Turkish', iso_639_1: 'tr', iso_3166_1: 'TR', checked: false }
         ]
-    ]
+    ],
+        main_data: [
+            {name: 'year', checked: true, key: 'production_year'},
+            {name: 'genres', checked: true,  key: 'genre'},
+            {name: 'countries', checked: true, key: 'country'},
+            {name: 'duration', checked: true, key: 'duration'},
+        ],
+        secondary_data: [
+            {name: 'synopsis', checked: false,  key: "synopsis"},
+            {name: 'original title', checked: false,  key: "original_title"},
+            {name: 'original language', checked: false,  key: "original_language"},
+            {name: 'production companies', checked: false,  key: "production_companies"},
+            {name: 'EU/NonEU (in development)', checked: false,  key: "eu"},
+        ]
 }
 
 const LanguagesSlice = createSlice({
     name: "languages", initialState, reducers: {
-    setChecked: (state, action: PayloadAction<{checked: boolean, iso_3166_1: string}>)=>{
+    setCheckedLanguage: (state, action: PayloadAction<{checked: boolean, iso_3166_1: string}>)=>{
         const {checked, iso_3166_1} = action.payload
         for (let i = 0; i<state.languages.length; i++) {
             const languagesGroup = state.languages[i]
@@ -54,10 +73,21 @@ const LanguagesSlice = createSlice({
                 }
             }
         }
+    },
+    setCheckedMetadata: (state, action: PayloadAction<{checked: boolean, name: string}>)=>{
+        const {checked, name} = action.payload
+        for (let i =0; i<state.main_data.length; i++) {
+            const item = state.main_data[i]
+            if (item.name === name) state.main_data[i].checked = checked
+        }
+        for (let i =0; i<state.secondary_data.length; i++) {
+            const item = state.secondary_data[i]
+            if (item.name === name) state.secondary_data[i].checked = checked
+        }
     }
     }
 })
 
 export default LanguagesSlice.reducer
 
-export const {setChecked} = LanguagesSlice.actions
+export const {setCheckedLanguage, setCheckedMetadata} = LanguagesSlice.actions

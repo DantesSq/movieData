@@ -54,6 +54,9 @@ const Main = () => {
     {
       spi_code: "",
       title: "",
+      type: "",
+      imdb_id: "",
+      tmdb_id: "",
       genre: "",
       production_year: "",
       country: "",
@@ -63,10 +66,6 @@ const Main = () => {
       // title_translated: "",
       // Synopsis: "",
       // Synopsis_translated: "",
-      imdb_id: "",
-      tmdb_id: "",
-      Status: "",
-      type: "",
     },
   ];
 

@@ -2,33 +2,28 @@ import React from "react";
 import { useAppDispatch, useAppSelector } from "../store/store";
 import RequestButton from "./RequestButton";
 import { throttleRequestTranslation } from "../utils/getTranslations";
-import { setChecked } from "../store/features/languagesSlice";
+import { setCheckedLanguage } from "../store/features/requestOptionsSlice";
 
 const Translations = () => {
-  const { languages } = useAppSelector((state) => state.languages);
+  const { languages } = useAppSelector((state) => state.options);
   const currentFile = useAppSelector((state) => state.files.currentFile);
 
   const dispatch = useAppDispatch();
 
-  const [languageChecked, setLanguageChecked] = React.useState(false);
-  const [languagesIso, setLanguagesIso] = React.useState([""]);
+  const [options, setOptions] = React.useState([""]);
   React.useEffect(() => {
     if (!languages) return;
-    const hasCheckedLanguage = languages.some((languageGroup) => {
-      return languageGroup.some((language) => language.checked === true);
-    });
-    hasCheckedLanguage ? setLanguageChecked(true) : setLanguageChecked(false);
     const allLanguages = languages.flatMap((languageGroup) => languageGroup);
-
     const checkedLanguageISOs = allLanguages
       .filter((language) => language.checked === true)
       .map((language) => language.iso_3166_1);
-    setLanguagesIso(checkedLanguageISOs);
+
+    setOptions(checkedLanguageISOs);
   }, [languages]);
 
   return (
     <>
-      <div className="TITLE/SYNOPSIS flex space-x-[25px]">
+      {/* <div className="TITLE/SYNOPSIS flex space-x-[25px]">
         <div className="flex items-center space-x-[10px]">
           <input
             className="w-[20px] h-[20px]"
@@ -49,7 +44,7 @@ const Translations = () => {
           />
           <label htmlFor="synopsis">Translate Synopsis</label>
         </div>
-      </div>
+      </div> */}
       <div className="LANGUAGES space-y-[25px]">
         <h1>Languages</h1>
         {languages.map((languages, index) => {
@@ -65,7 +60,7 @@ const Translations = () => {
                       className="w-[20px] h-[20px]"
                       onChange={(e) => {
                         dispatch(
-                          setChecked({
+                          setCheckedLanguage({
                             checked: e.target.checked,
                             iso_3166_1: language.iso_3166_1,
                           })
@@ -87,10 +82,10 @@ const Translations = () => {
       </div>
       <RequestButton
         text="Get Translations"
-        requestTranslation={throttleRequestTranslation}
-        classes={`btn w-full ${!languageChecked && "btn-locked"}`}
-        disabled={!languageChecked}
-        languages={languagesIso}
+        requestWithOptions={throttleRequestTranslation}
+        classes={`btn w-full ${!options.length && "btn-locked"}`}
+        disabled={!options.length}
+        options={options}
       />
     </>
   );
