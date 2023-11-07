@@ -6,8 +6,10 @@ import { setCheckedLanguage } from "../store/features/requestOptionsSlice";
 
 const Translations = ({
   setOpenTranslations,
+  setCurrentIndex,
 }: {
   setOpenTranslations: (arg: boolean) => void;
+  setCurrentIndex: any;
 }) => {
   const { languages } = useAppSelector((state) => state.options);
   const currentFile = useAppSelector((state) => state.files.currentFile);
@@ -99,6 +101,7 @@ const Translations = ({
               classes={`btn ${!options.length && "btn-locked"} btn-menu`}
               disabled={!options.length}
               options={options}
+              setCurrentIndex={setCurrentIndex}
             />
           </div>
         </div>

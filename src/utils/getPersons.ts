@@ -60,12 +60,14 @@ if (type?.toLowerCase() === `series` || spi_code?.startsWith(`SPY`)) {
   return movie;
 };
 
-export const throttleRequestPersons = async (excelData: ExcelData[], setUpdatedFile: any) => {
+export const throttleRequestPersons = async (excelData: ExcelData[], setUpdatedFile: any, setCurrentIndex: any) => {
   let index = 0;
   const getPersonsRecursion = async () => {
     if (index >= excelData.length) {
+      setCurrentIndex(0)
       return
     }
+    setCurrentIndex(index+1)
     console.log(`processing... [${index+1}/${excelData.length}]`)
     const movie = excelData[index];
     await getPersonsRequest(movie, setUpdatedFile);

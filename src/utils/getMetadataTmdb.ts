@@ -132,12 +132,14 @@ const getMetadataFromTMDB = async (movie: ExcelData, setUpdatedFile: (updateFunc
     }
   };
 
-export  const throttleRequestMetadata = async (excelData: ExcelData[], setUpdatedFile: (arg: any)=>void, options: string[] | undefined) => {
+export  const throttleRequestMetadata = async (excelData: ExcelData[], setUpdatedFile: (arg: any)=>void, options: string[] | undefined, setCurrentIndex: any) => {
     let index = 0;
     const checkMetaData = async () => {
       if (index >= excelData.length){
+        setCurrentIndex(0)
         return;
       }
+      setCurrentIndex(index+1)
       console.log(`process... ${index + 1}/${excelData.length}`);
       const item = excelData[index];
       await getMetadataFromTMDB(item, setUpdatedFile, options);

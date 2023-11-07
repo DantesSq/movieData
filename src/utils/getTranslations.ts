@@ -68,13 +68,15 @@ const getTranslatedTitle = async (movie: ExcelData, setUpdatedFile: (updateFunct
     }
   };
 
-export  const throttleRequestTranslation = async (excelData: ExcelData[], setDownloadData: (arg: any)=>void, languages: string[] | undefined) => {
+export  const throttleRequestTranslation = async (excelData: ExcelData[], setDownloadData: (arg: any)=>void, languages: string[] | undefined, setCurrentIndex: any) => {
     let index = 0;
     if (!languages) return
     const checkTranslatedTitles = async () => {
       if (index >= excelData.length){
+        setCurrentIndex(0)
         return;
       }
+      setCurrentIndex(index+1)
       console.log(`process... ${index + 1}/${excelData.length}`);
       const item = excelData[index];
       index++;

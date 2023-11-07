@@ -37,8 +37,9 @@ const getTMDB = async (movie: ExcelData, setUpdatedFile: (updateFunction: (prev:
       }
   }
 
-export const throttleRequestTMDB = async (excelData: ExcelData[], setUpdatedFile: any) => {
+export const throttleRequestTMDB = async (excelData: ExcelData[], setUpdatedFile: any, setCurrentIndex: any) => {
     let index = 0;
+    setCurrentIndex(1)
     const sendRequest = async () => {
         if (index < excelData.length) {
           console.log(index+1, excelData.length)

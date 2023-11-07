@@ -13,6 +13,8 @@ const DataManipulating = () => {
   const [openTranslations, setOpenTranslations] = React.useState(false);
   const [openMetadata, setOpenMetadata] = React.useState(false);
   const [cat, setCat] = React.useState(false);
+  const [currentIndex, setCurrentIndex] = React.useState(0);
+
   if (!currentFile) return <></>;
 
   return (
@@ -112,6 +114,7 @@ const DataManipulating = () => {
           <RequestButton
             text="Get Directors & Cast"
             requestFunction={throttleRequestPersons}
+            setCurrentIndex={setCurrentIndex}
             classes="w-full "
           />
         </div>
@@ -173,7 +176,10 @@ const DataManipulating = () => {
                 : "hidden"
             }
           >
-            <Metadata setOpenMetadata={setOpenMetadata} />
+            <Metadata
+              setOpenMetadata={setOpenMetadata}
+              setCurrentIndex={setCurrentIndex}
+            />
           </div>
         </div>
         <div className="space-y-[25px] items-center flex flex-col w-full">
@@ -231,7 +237,10 @@ const DataManipulating = () => {
                 : "hidden"
             }
           >
-            <Translations setOpenTranslations={setOpenTranslations} />
+            <Translations
+              setOpenTranslations={setOpenTranslations}
+              setCurrentIndex={setCurrentIndex}
+            />
           </div>
         </div>
         {/* <div className="w-[280px]">
@@ -303,6 +312,7 @@ const DataManipulating = () => {
           alt="processing data..."
         />
         <h1>Processing data...</h1>
+        <h1>{Math.ceil((currentIndex / currentFile.data.length) * 100)}%</h1>
       </div>
 
       <div className={cat ? "" : "hidden"}>

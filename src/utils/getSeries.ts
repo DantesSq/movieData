@@ -72,13 +72,14 @@ const getSeriesRequest = async (
   return movie;
 };
 
-export const throttleRequestSeries = async (excelData: ExcelData[], setUpdatedFile: any) => {
+export const throttleRequestSeries = async (excelData: ExcelData[], setUpdatedFile: any, setCurrentIndex: any) => {
   let index = 0;
   const getSeries = async () => {
     if (index >= excelData.length) {
+      setCurrentIndex(0)
       return
     }
-
+    setCurrentIndex(index+1)
     console.log(`proces.. [${index+1}/${excelData.length}]`)
     const movie = excelData[index];
     await getSeriesRequest(movie, setUpdatedFile);

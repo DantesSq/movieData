@@ -75,13 +75,14 @@ for (id; seasonExists; id++) {
 
 };
 
-export const throttleRequestSeriesDirector = async (excelData: ExcelData[], setUpdatedFile: any) => {
+export const throttleRequestSeriesDirector = async (excelData: ExcelData[], setUpdatedFile: any, setCurrentIndex: any) => {
   let index = 0;
   const getSeasonsDirectorsRecursion = async () => {
     if (index >= excelData.length) {
+      setCurrentIndex(0)
       return
     }
-
+    setCurrentIndex(index+1)
     console.log(`processing... [${index+1}/${excelData.length}]`)
 
     const movie = excelData[index];

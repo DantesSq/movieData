@@ -6,8 +6,10 @@ import { setCheckedMetadata } from "../store/features/requestOptionsSlice";
 
 const Metadata = ({
   setOpenMetadata,
+  setCurrentIndex,
 }: {
   setOpenMetadata: (arg: boolean) => void;
+  setCurrentIndex: any;
 }) => {
   const dispatch = useAppDispatch();
 
@@ -96,6 +98,7 @@ const Metadata = ({
               classes={`btn ${!options.length && "btn-locked"}  btn-menu`}
               disabled={!options.length}
               options={options}
+              setCurrentIndex={setCurrentIndex}
             />
           </div>
         </div>

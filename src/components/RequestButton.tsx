@@ -13,15 +13,18 @@ interface RequestButtonProps {
   text: string;
   requestFunction?: (
     excelData: ExcelData[],
-    setUpdatedFile: any
+    setUpdatedFile: any,
+    setCurrentIndex: any
   ) => Promise<void>;
   requestWithOptions?: (
     excelData: ExcelData[],
     setUpdatedFile: any,
-    options: string[] | undefined
+    options: string[] | undefined,
+    setCurrentIndex: any
   ) => Promise<void>;
   disabled?: boolean;
   options?: string[];
+  setCurrentIndex: any;
 }
 
 const RequestButton: React.FC<RequestButtonProps> = ({
@@ -31,6 +34,7 @@ const RequestButton: React.FC<RequestButtonProps> = ({
   disabled,
   requestWithOptions,
   options,
+  setCurrentIndex,
 }) => {
   const { currentFile, isProcessing } = useAppSelector((state) => state.files);
   const tmdb_requested = currentFile?.tmdb_requested;
@@ -46,17 +50,23 @@ const RequestButton: React.FC<RequestButtonProps> = ({
     if (start && tmdb_requested) {
       const throttleRequest = async () => {
         if (requestFunction) {
-          await requestFunction(currentFile.data, setUpdatedFileData);
+          await requestFunction(
+            currentFile.data,
+            setUpdatedFileData,
+            setCurrentIndex
+          );
         } else if (requestWithOptions) {
           await requestWithOptions(
             currentFile.data,
             setUpdatedFileData,
-            options
+            options,
+            setCurrentIndex
           );
         }
 
         setStart(false);
         dispatch(setIsProcessing(false));
+        setCurrentIndex(0);
       };
 
       throttleRequest();
@@ -92,7 +102,11 @@ const RequestButton: React.FC<RequestButtonProps> = ({
 
   const checkTmdb = async () => {
     if (!tmdb_requested && currentFile) {
-      await throttleRequestTMDB(currentFile.data, setUpdatedFileData);
+      await throttleRequestTMDB(
+        currentFile.data,
+        setUpdatedFileData,
+        setCurrentIndex
+      );
 
       setRequestedTmdb(true);
     }
