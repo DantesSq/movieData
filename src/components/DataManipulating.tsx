@@ -298,7 +298,8 @@ const DataManipulating = () => {
       <div className={isProcessing ? "" : "hidden"}>
         <img
           className="w-[500px] h-[500px]"
-          src="https://media4.giphy.com/media/ule4vhcY1xEKQ/giphy.gif?cid=ecf05e47s96k6evjuw3o2segnf27o7twfqdo4zn6uhc8e9wv&ep=v1_gifs_search&rid=giphy.gif&ct=g"
+          src="https://media.tenor.com/NvnO0AuuzvkAAAAC/dancing-cats.gif"
+          // src="https://media4.giphy.com/media/ule4vhcY1xEKQ/giphy.gif?cid=ecf05e47s96k6evjuw3o2segnf27o7twfqdo4zn6uhc8e9wv&ep=v1_gifs_search&rid=giphy.gif&ct=g"
           alt="processing data..."
         />
         <h1>Processing data...</h1>

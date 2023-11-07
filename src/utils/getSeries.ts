@@ -62,7 +62,6 @@ const getSeriesRequest = async (
           );
           return
     }
-
   } catch (error) {
     setUpdatedFile((prev: any) => [
       ...prev,
