@@ -1,6 +1,7 @@
 import React from "react";
 import Main from "./components/Main";
 import { Route, Routes } from "react-router-dom";
+import MainCreateCtrl from "./components/MainCreateCtrl";
 
 function App() {
   return (
@@ -13,7 +14,7 @@ function App() {
       {/* <ApiLogin /> */}
       <Routes>
         <Route path="/" element={<Main />} />
-        <Route path="/createctrl" element={<Main />} />
+        <Route path="/createctrl" element={<MainCreateCtrl />} />
       </Routes>
     </div>
   );
