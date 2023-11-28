@@ -13,6 +13,13 @@ export type ExcelData = {
     tmdb_id: string | null
     type: string | null
     Synopsis: string | null
+    original_language: string | null
+    production_companies: string | null
+    eu: string | null
+
+    series_title: string | null
+    episode_title: string | null
+    series_duration: number | null
 }
 
 export interface Translation {
@@ -93,6 +100,7 @@ export interface tmdbMovieDetails {
     runtime: number;
     release_date: string;
     overview: string
+    title:string
   }
 
 export interface tmdbSeriesDetails {

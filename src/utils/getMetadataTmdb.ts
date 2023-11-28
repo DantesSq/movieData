@@ -1,8 +1,27 @@
 import axios from "axios";
 import { ExcelData, tmdbMovieDetails, tmdbSeriesDetails } from "../types/types";
 const getMetadataFromTMDB = async (movie: ExcelData, setUpdatedFile: (updateFunction: (prev: ExcelData[]) => ExcelData[])=>void, metadataOptions: string[] | undefined) => {
-    const {tmdb_id, genre, country, production_year, director,cast, duration, type, spi_code, Synopsis} = movie
+    const {tmdb_id, genre, country, production_year, director,cast, duration, type, spi_code, Synopsis, title, original_language, production_companies, eu} = movie
     if (!metadataOptions) return
+    
+    const excelData: any = {
+      ['production_year']: production_year,
+      ['country']: country,
+      ['genre']: genre,
+      ['duration']: duration,
+      ['synopsis']: Synopsis,
+      ['original_title']: title,
+      ['original_language']: original_language,
+      ['production_companies']: production_companies,
+      ['eu']: eu
+  }
+  
+  // -------------------- Need to be fixed -------------------------
+  // if (metadataOptions.every(option => excelData.hasOwnProperty(option))) {
+  //   setUpdatedFile((prev: ExcelData[]) => [...prev,movie]);
+  //   return
+  // } 
+
     const emptyOptionsObj: any = {}
     for (const key of metadataOptions) {
       emptyOptionsObj[key] = '';
@@ -83,7 +102,8 @@ const getMetadataFromTMDB = async (movie: ExcelData, setUpdatedFile: (updateFunc
         const response = await axios(options);
       // MOVIES DATA 
       const data: tmdbMovieDetails = response.data;
-      
+      const original_title = data.title
+
       const title = data.original_title
       const tmdbSynopsis = data.overview
       const tmdbGenres = data.genres.map((item) => item.name).join(", ");
@@ -105,7 +125,7 @@ const getMetadataFromTMDB = async (movie: ExcelData, setUpdatedFile: (updateFunc
           ['original_title']: title || '',
           ['original_language']: original_language || '',
           ['production_companies']: tmdbCompanies || '',
-          ['eu']: ''
+          ['eu']: '',
       }
       const result: { [key: string]: string } = {};
     if (metadataOptions) {
@@ -118,7 +138,8 @@ const getMetadataFromTMDB = async (movie: ExcelData, setUpdatedFile: (updateFunc
         ...prev,
         {
           ...movie,
-          ...result
+          ...result,
+          ['tmdbTitle']: original_title
         },
       ]);
       }

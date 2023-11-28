@@ -4,12 +4,16 @@ import { ExcelData, Person } from "../types/types";
 const getPersonsRequest = async (
     movie: ExcelData, setUpdatedFile: (updateFunction: (prev: ExcelData[]) => ExcelData[])=>void
 ) => {
-  const { tmdb_id, type, spi_code } = movie;
+  const { tmdb_id, type, spi_code, director, cast } = movie;
+  if (director?.length && cast?.length) {
+    setUpdatedFile((prev: any) => [...prev, movie,]);
+    return;
+  }
 
   if (!tmdb_id) {
     setUpdatedFile((prev: any) => [
       ...prev,
-      { ...movie, Status: "problem with tmdbId", director: '', cast: ''},
+      { ...movie, director: '', cast: ''},
     ]);
     return;
   }

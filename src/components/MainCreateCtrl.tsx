@@ -1,12 +1,13 @@
 import React from "react";
 import { useAppDispatch, useAppSelector } from "../store/store";
-import { parsePath, useNavigate } from "react-router-dom";
-import { resetFiles } from "../store/features/filesSlice";
+import { throttleProgramData } from "../utils/cc/getProgramData";
+import RequestButton from "./RequestButton";
+import { useNavigate } from "react-router-dom";
 
 const MainCreateCtrl = () => {
-  const { currentFile, files } = useAppSelector((state) => state.files);
+  const { currentFile, isProcessing } = useAppSelector((state) => state.files);
   const dispatch = useAppDispatch();
-
+  const [currentIndex, setCurrentIndex] = React.useState(0);
   const navigate = useNavigate();
 
   React.useEffect(() => {
@@ -15,31 +16,89 @@ const MainCreateCtrl = () => {
 
   if (!currentFile) return <>No Current File</>;
   return (
-    <div className="w-full flex justify-center my-[25px]">
-      {currentFile ? (
-        <div className="w-[500px]">
-          <div className="flex justify-between">
-            <h1 className="text-lg">Current File</h1>
-            <h2
-              onClick={() => dispatch(resetFiles())}
-              className="text-[15px] text-purple-800 underline hover:cursor-pointer hover:text-purple-700 active:text-purple-600"
-            >
-              Upload new file
-            </h2>
-          </div>
-          <select className="w-full h-12 rounded-xs bg-gray-200 text-center mb-[50px]">
-            <option value={currentFile?.index}>{currentFile.name}</option>
-            {files.map((file) => {
-              if (file.index !== currentFile.index) {
-                return <option value={file?.index}>{file.name}</option>;
-              }
-            })}
-          </select>
+    <>
+      <div
+        className={
+          isProcessing
+            ? "hidden"
+            : "space-y-[50px] text-[16px] flex flex-col items-center"
+        }
+      >
+        <div className="relative w-[280px]">
+          <svg
+            className="absolute w-[40px] h-[40px] z-50 top-[50%] translate-y-[-50%] left-[10px] "
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <g id="SVGRepo_bgCarrier" stroke-width="0" />
+            <g
+              id="SVGRepo_tracerCarrier"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <g id="SVGRepo_iconCarrier">
+              <path
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M8.6231 5.93966C7.75276 6.37483 7.5 6.83725 7.5 7.125C7.5 7.41275 7.75276 7.87517 8.6231 8.31034C9.44857 8.72307 10.6414 9 12 9C13.3586 9 14.5514 8.72307 15.3769 8.31034C16.2472 7.87517 16.5 7.41275 16.5 7.125C16.5 6.83725 16.2472 6.37483 15.3769 5.93966C14.5514 5.52693 13.3586 5.25 12 5.25C10.6414 5.25 9.44857 5.52693 8.6231 5.93966ZM16.5 9.39844C16.3535 9.4904 16.2018 9.57494 16.0477 9.65198C14.9731 10.1893 13.5409 10.5 12 10.5C10.4591 10.5 9.02693 10.1893 7.95228 9.65198C7.79821 9.57494 7.64654 9.4904 7.5 9.39844V10.375C7.5 10.7155 7.77767 11.2057 8.63569 11.6552C9.45819 12.086 10.6464 12.375 12 12.375C13.3536 12.375 14.5418 12.086 15.3643 11.6552C16.2223 11.2057 16.5 10.7155 16.5 10.375V9.39844ZM18 7.125V10.375C18 10.417 17.9989 10.4587 17.9966 10.5H18V13.375C18 13.417 17.9989 13.4587 17.9966 13.5H18V16.375C18 17.5532 17.1024 18.4381 16.0603 18.9839C14.9827 19.5484 13.5459 19.875 12 19.875C10.4541 19.875 9.01731 19.5484 7.93968 18.9839C6.89758 18.4381 6 17.5532 6 16.375V13.5H6.00339C6.00114 13.4587 6 13.417 6 13.375V10.5H6.00339C6.00114 10.4587 6 10.417 6 10.375V7.125C6 5.96301 6.92249 5.11292 7.95228 4.59802C9.02693 4.0607 10.4591 3.75 12 3.75C13.5409 3.75 14.9731 4.0607 16.0477 4.59802C17.0775 5.11292 18 5.96301 18 7.125ZM7.5 15.7267V16.375C7.5 16.7155 7.77767 17.2057 8.63569 17.6552C9.45819 18.086 10.6464 18.375 12 18.375C13.3536 18.375 14.5418 18.086 15.3643 17.6552C16.2223 17.2057 16.5 16.7155 16.5 16.375V15.7267C16.358 15.8194 16.2106 15.9052 16.0603 15.9839C14.9827 16.5484 13.5459 16.875 12 16.875C10.4541 16.875 9.01731 16.5484 7.93968 15.9839C7.78936 15.9052 7.64205 15.8194 7.5 15.7267ZM16.0603 12.9839C16.2106 12.9052 16.358 12.8194 16.5 12.7267V13.375C16.5 13.7155 16.2223 14.2057 15.3643 14.6552C14.5418 15.086 13.3536 15.375 12 15.375C10.6464 15.375 9.45819 15.086 8.63569 14.6552C7.77767 14.2057 7.5 13.7155 7.5 13.375V12.7267C7.64205 12.8194 7.78936 12.9052 7.93968 12.9839C9.01731 13.5484 10.4541 13.875 12 13.875C13.5459 13.875 14.9827 13.5484 16.0603 12.9839Z"
+                fill="#ffffff"
+              />
+            </g>
+          </svg>
+          <RequestButton
+            text="Get data from CC"
+            classes="w-[280px] btn"
+            requestFunction={throttleProgramData}
+            setCurrentIndex={setCurrentIndex}
+          />
         </div>
-      ) : (
-        <></>
-      )}
-    </div>
+        <div className="relative w-[280px]">
+          <svg
+            className="absolute w-[30px] h-[30px] z-50 fill-black top-[50%] translate-y-[-50%] left-[20px] "
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M18.7153 1.71609C18.3241 1.32351 18.3241 0.687013 18.7153 0.294434C19.1066 -0.0981448 19.7409 -0.0981448 20.1321 0.294434L22.4038 2.57397L22.417 2.58733C23.1935 3.37241 23.1917 4.64056 22.4116 5.42342L20.1371 7.70575C19.7461 8.09808 19.1122 8.09808 18.7213 7.70575C18.3303 7.31342 18.3303 6.67733 18.7213 6.285L20.0018 5L4.99998 5C4.4477 5 3.99998 5.44772 3.99998 6V13C3.99998 13.5523 3.55227 14 2.99998 14C2.4477 14 1.99998 13.5523 1.99998 13V6C1.99998 4.34315 3.34313 3 4.99998 3H19.9948L18.7153 1.71609Z"
+              fill="#ffffff"
+            />
+            <path
+              d="M22 11C22 10.4477 21.5523 10 21 10C20.4477 10 20 10.4477 20 11V18C20 18.5523 19.5523 19 19 19L4.00264 19L5.28213 17.7161C5.67335 17.3235 5.67335 16.687 5.28212 16.2944C4.8909 15.9019 4.2566 15.9019 3.86537 16.2944L1.59369 18.574L1.58051 18.5873C0.803938 19.3724 0.805727 20.6406 1.58588 21.4234L3.86035 23.7058C4.25133 24.0981 4.88523 24.0981 5.2762 23.7058C5.66718 23.3134 5.66718 22.6773 5.2762 22.285L3.99563 21L19 21C20.6568 21 22 19.6569 22 18L22 11Z"
+              fill="#ffffff"
+            />
+          </svg>
+          <button className="btn w-full h12" onClick={() => navigate("/")}>
+            Switch to TMDB
+          </button>
+        </div>
+        <div className="w-full items-center flex flex-col">
+          <svg
+            className="absolute w-[30px] h-[30px] z-50 fill-black top-[50%] translate-y-[-50%] left-[10px] "
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M18.7153 1.71609C18.3241 1.32351 18.3241 0.687013 18.7153 0.294434C19.1066 -0.0981448 19.7409 -0.0981448 20.1321 0.294434L22.4038 2.57397L22.417 2.58733C23.1935 3.37241 23.1917 4.64056 22.4116 5.42342L20.1371 7.70575C19.7461 8.09808 19.1122 8.09808 18.7213 7.70575C18.3303 7.31342 18.3303 6.67733 18.7213 6.285L20.0018 5L4.99998 5C4.4477 5 3.99998 5.44772 3.99998 6V13C3.99998 13.5523 3.55227 14 2.99998 14C2.4477 14 1.99998 13.5523 1.99998 13V6C1.99998 4.34315 3.34313 3 4.99998 3H19.9948L18.7153 1.71609Z"
+              fill="#ffffff"
+            />
+            <path
+              d="M22 11C22 10.4477 21.5523 10 21 10C20.4477 10 20 10.4477 20 11V18C20 18.5523 19.5523 19 19 19L4.00264 19L5.28213 17.7161C5.67335 17.3235 5.67335 16.687 5.28212 16.2944C4.8909 15.9019 4.2566 15.9019 3.86537 16.2944L1.59369 18.574L1.58051 18.5873C0.803938 19.3724 0.805727 20.6406 1.58588 21.4234L3.86035 23.7058C4.25133 24.0981 4.88523 24.0981 5.2762 23.7058C5.66718 23.3134 5.66718 22.6773 5.2762 22.285L3.99563 21L19 21C20.6568 21 22 19.6569 22 18L22 11Z"
+              fill="#ffffff"
+            />
+          </svg>
+          <button
+            disabled
+            className="h12 w-full btn btn-locked"
+            onClick={() => navigate("/import")}
+          >
+            Switch to Import
+          </button>
+        </div>
+      </div>
+    </>
   );
 };
 

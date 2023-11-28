@@ -4,9 +4,9 @@ import { ExcelData } from "../types/types";
 const getSeriesRequest = async (
     movie: any, setUpdatedFile: (updateFunction: (prev: ExcelData[]) => ExcelData[])=>void
 ) => {
-  const series_title: string = movie['Season English Title'];
+  const {title} = movie
 
-  if (!series_title) {
+  if (!title) {
     setUpdatedFile((prev: any) => [
       ...prev,
       { ...movie, Status: "problem with Title" },
@@ -15,7 +15,17 @@ const getSeriesRequest = async (
   }
 
   try {
-    const response = await axios(`https://imdb-api.xeronles.workers.dev/search?query=${series_title}`);
+    // const response = await axios(`https://imdb-api.xeronles.workers.dev/search?query=${title}`);
+    const options = {
+      method: "GET",
+      url: `https://api.themoviedb.org/3/search/movie?query=${title}`, // series
+      headers: {
+        accept: "application/json",
+        Authorization:
+        "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkNWViMTUyY2MwMWIxZGQ3MTFhMDdiZTUwMGRkYmQzNSIsInN1YiI6IjY1MTE3NTEwZTFmYWVkMDEwMGU5ZDQ1NCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.RDD3x2S6wsmVMzYIK46Dicgr-naRFIh1eWEOaTQhJ3M",
+    },
+    };
+    const response = await axios(options);
     const results = response.data.results
     // debugger
     if (!results.length) {
@@ -23,32 +33,47 @@ const getSeriesRequest = async (
             ...prev,
             {
               ...movie,
-              imdb: 'no results',
+              tmdb_id: 'no results',
               imdb_title: ''
             },
           ]);
           return
     }
 
-    let bool = false
-    for (let id = 0; id<results.length; id++) {
-        if (bool) return
-        const result = results[id]
+    let bool = true
+    // for (let id = 0; id<results.length; id++) {
+    //     if (bool) return
+    //     const result = results[id]
+    //   console.log(results)
+    //     if (result.type === 'movie') {
+    //         setUpdatedFile((prev: any) => [
+    //             ...prev,
+    //             {
+    //               ...movie,
+    //               imdb: `https://www.imdb.com/title/${result.id}`,
+    //               imdb_title: result.title,
+    //               overview: result.overview,
+    //             },
+    //           ]
+    //           );
+    //           bool = true
+    //           return
+    //     }
+    // }
 
-        if (result.type === 'tvSeries') {
-            setUpdatedFile((prev: any) => [
-                ...prev,
-                {
-                  ...movie,
-                  imdb: `https://www.imdb.com/title/${result.id}`,
-                  imdb_title: result.title
-                },
-              ]
-              );
-              bool = true
-              return
-        }
-    }
+    const result = results[0]
+    setUpdatedFile((prev: any) => [
+      ...prev,
+      {
+        ...movie,
+        tmdb_id: `${result.id}`,
+        imdb_title: result.title,
+        overview: result.overview,
+      },
+    ]
+    );
+    bool = true
+    return
 
     if (!bool) {
         setUpdatedFile((prev: any) => [
@@ -68,6 +93,7 @@ const getSeriesRequest = async (
       { ...movie, Status: "Error when sending request",
       imdb_title: '' }
     ]);
+    console.error(error)
   }
   return movie;
 };

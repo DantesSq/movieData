@@ -28,7 +28,10 @@ const Translations = ({
   }, [languages]);
 
   return (
-    <div className="absolute w-[100vw] h-[100vh] bg-black/70 top-0 left-0 z-[1000] flex items-center justify-center text-[18px] ">
+    <div
+      id="ddd"
+      className="absolute w-[100vw] h-[100vh] bg-black/70 top-0 left-0 z-[1000] flex items-center justify-center text-[18px] "
+    >
       <div className=" bg-white p-[30px] flex flex-col items-center rounded-xl space-y-[40px] w-[600px]">
         {/* <div className="TITLE/SYNOPSIS flex space-x-[25px]">
         <div className="flex items-center space-x-[10px]">

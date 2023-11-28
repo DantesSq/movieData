@@ -38,6 +38,8 @@ const RequestButton: React.FC<RequestButtonProps> = ({
 }) => {
   const { currentFile, isProcessing } = useAppSelector((state) => state.files);
   const tmdb_requested = currentFile?.tmdb_requested;
+  const name = currentFile?.name;
+  const index = currentFile?.index;
 
   const dispatch = useAppDispatch();
 
@@ -74,15 +76,24 @@ const RequestButton: React.FC<RequestButtonProps> = ({
   }, [start, tmdb_requested]);
 
   React.useEffect(() => {
-    if (!isProcessing && updatedFileData.length && currentFile && !start) {
+    // console.log("here", updatedFileData, isProcessing, start);
+    if (
+      !isProcessing &&
+      updatedFileData.length &&
+      name &&
+      index &&
+      tmdb_requested &&
+      !start
+    ) {
       dispatch(
         updateFile({
-          file: { ...currentFile, data: updatedFileData },
+          file: { name, index, tmdb_requested, data: updatedFileData },
         })
       );
-      setUpdatedFileData([]);
+      setUpdatedFileData((prev) => []);
+      // console.log(updatedFileData, "updated");
     }
-  }, [isProcessing, updatedFileData, start]);
+  }, [isProcessing, updatedFileData, start, name, index, tmdb_requested]);
 
   React.useEffect(() => {
     if (
@@ -117,6 +128,7 @@ const RequestButton: React.FC<RequestButtonProps> = ({
       <button
         className={`btn h12 ${classes}`}
         onClick={async () => {
+          // debugger;
           dispatch(setIsProcessing(true));
           await checkTmdb();
           setStart(true);

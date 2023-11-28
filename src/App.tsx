@@ -2,6 +2,8 @@ import React from "react";
 import Main from "./components/Main";
 import { Route, Routes } from "react-router-dom";
 import MainCreateCtrl from "./components/MainCreateCtrl";
+import DataManipulating from "./components/DataManipulating";
+import StandartImport from "./components/StandartImport";
 
 function App() {
   return (
@@ -13,8 +15,30 @@ function App() {
       </header>
       {/* <ApiLogin /> */}
       <Routes>
-        <Route path="/" element={<Main />} />
-        <Route path="/createctrl" element={<MainCreateCtrl />} />
+        <Route
+          path="/"
+          element={
+            <Main>
+              <DataManipulating />
+            </Main>
+          }
+        />
+        <Route
+          path="/createctrl"
+          element={
+            <Main>
+              <MainCreateCtrl />
+            </Main>
+          }
+        />
+        <Route
+          path="/import"
+          element={
+            <Main>
+              <StandartImport />
+            </Main>
+          }
+        />
       </Routes>
     </div>
   );
