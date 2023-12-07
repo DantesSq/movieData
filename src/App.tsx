@@ -9,9 +9,7 @@ function App() {
   return (
     <div className="App bg-bg h-[100vh]">
       <header className="App-header w-[100wv] h-[35px] bg-primary text-white flex justify-center items-center">
-        <h1 className="text-gray-300 hover:cursor-cat">
-          CreateCTRL Data (Soon...)
-        </h1>
+        <h1 className="text-gray-300 hover:cursor-cat">...</h1>
       </header>
       {/* <ApiLogin /> */}
       <Routes>

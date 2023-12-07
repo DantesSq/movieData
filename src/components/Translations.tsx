@@ -1,19 +1,14 @@
 import React from "react";
 import { useAppDispatch, useAppSelector } from "../store/store";
-import RequestButton from "./RequestButton";
-import { throttleRequestTranslation } from "../utils/getTranslations";
 import { setCheckedLanguage } from "../store/features/requestOptionsSlice";
+import TranslationsButton from "./TranslationsButton";
 
 const Translations = ({
   setOpenTranslations,
-  setCurrentIndex,
 }: {
   setOpenTranslations: (arg: boolean) => void;
-  setCurrentIndex: any;
 }) => {
   const { languages } = useAppSelector((state) => state.options);
-  const currentFile = useAppSelector((state) => state.files.currentFile);
-
   const dispatch = useAppDispatch();
 
   const [options, setOptions] = React.useState([""]);
@@ -98,14 +93,7 @@ const Translations = ({
             Cancel
           </button>
           <div onClick={() => setOpenTranslations(false)}>
-            <RequestButton
-              text="Get Translations"
-              requestWithOptions={throttleRequestTranslation}
-              classes={`btn ${!options.length && "btn-locked"} btn-menu`}
-              disabled={!options.length}
-              options={options}
-              setCurrentIndex={setCurrentIndex}
-            />
+            <TranslationsButton options={options} />
           </div>
         </div>
       </div>

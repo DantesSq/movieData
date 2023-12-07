@@ -1,15 +1,12 @@
 import React from "react";
-import RequestButton from "./RequestButton";
-import { throttleRequestMetadata } from "../utils/getMetadataTmdb";
 import { useAppDispatch, useAppSelector } from "../store/store";
 import { setCheckedMetadata } from "../store/features/requestOptionsSlice";
+import MetadataButton from "./MetadataButton";
 
 const Metadata = ({
   setOpenMetadata,
-  setCurrentIndex,
 }: {
   setOpenMetadata: (arg: boolean) => void;
-  setCurrentIndex: any;
 }) => {
   const dispatch = useAppDispatch();
 
@@ -92,14 +89,7 @@ const Metadata = ({
             Cancel
           </button>
           <div onClick={() => setOpenMetadata(false)}>
-            <RequestButton
-              text="Get Metadata"
-              requestWithOptions={throttleRequestMetadata}
-              classes={`btn ${!options.length && "btn-locked"}  btn-menu`}
-              disabled={!options.length}
-              options={options}
-              setCurrentIndex={setCurrentIndex}
-            />
+            <MetadataButton options={options} />
           </div>
         </div>
       </div>

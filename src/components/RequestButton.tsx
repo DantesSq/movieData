@@ -1,7 +1,7 @@
 import React from "react";
 import { ExcelData } from "../types/types";
 import { useAppDispatch, useAppSelector } from "../store/store";
-import { throttleRequestTMDB } from "../utils/getTmdb";
+import { throttleRequestTMDB } from "../utils/removeORrewrite/getTmdb";
 import {
   requestTmdb,
   setIsProcessing,
@@ -76,7 +76,6 @@ const RequestButton: React.FC<RequestButtonProps> = ({
   }, [start, tmdb_requested]);
 
   React.useEffect(() => {
-    // console.log("here", updatedFileData, isProcessing, start);
     if (
       !isProcessing &&
       updatedFileData.length &&
@@ -91,7 +90,6 @@ const RequestButton: React.FC<RequestButtonProps> = ({
         })
       );
       setUpdatedFileData((prev) => []);
-      // console.log(updatedFileData, "updated");
     }
   }, [isProcessing, updatedFileData, start, name, index, tmdb_requested]);
 

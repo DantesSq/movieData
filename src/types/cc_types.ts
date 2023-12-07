@@ -27,6 +27,7 @@ type PersonFirm = {
 
 export type Program = {
     Title: string
+    OriginalTitle: string
     Attributes: any[] // Dependent, EU, ContenWarning
     PersonsFirms: PersonFirm[]
     ProductionCountries: Country[]

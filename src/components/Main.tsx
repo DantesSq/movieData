@@ -5,19 +5,20 @@ import UploadFile from "./UploadFile";
 
 import {
   changeOpenMenu,
+  clearRawFiles,
   resetFiles,
   setCurrentFile,
   submitRawFile,
 } from "../store/features/filesSlice";
 import { writeFile } from "../utils/writeFile";
 import { useNavigate } from "react-router-dom";
+import { ExcelData } from "../types/types";
 
 const Main = ({ children }: any) => {
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
-  const { rawFiles, openMenu, currentFile, files } = useAppSelector(
-    (state) => state.files
-  );
+
+  const { rawFiles, openMenu, currentFile, files, isProcessing } =
+    useAppSelector((state) => state.files);
 
   const handleFileSubmit = (e: any) => {
     e.preventDefault();
@@ -33,11 +34,17 @@ const Main = ({ children }: any) => {
           const workbook = XLSX.read(bufferFile, { type: "buffer" });
           const worksheetName = workbook.SheetNames[0];
           const worksheet = workbook.Sheets[worksheetName];
-          const data: any = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
+          const data: ExcelData[] = XLSX.utils.sheet_to_json(worksheet, {
+            defval: "",
+          });
+          const dataWithIds = data.map((row: ExcelData) => ({
+            ...row,
+            id: Math.random(),
+          }));
           dispatch(
             submitRawFile({
               name: file.file.name,
-              data: data,
+              data: dataWithIds,
               index: file.index,
               tmdb_requested: false,
             })
@@ -47,6 +54,7 @@ const Main = ({ children }: any) => {
 
         if (i === rawFiles.length) {
           dispatch(changeOpenMenu(false));
+          dispatch(clearRawFiles());
         }
       }
     }
@@ -72,7 +80,7 @@ const Main = ({ children }: any) => {
     <div className="w-full flex justify-center my-[25px]">
       {openMenu ? (
         <div>
-          <div className="flex items-center mb-[25px]">
+          <div className="flex items-center mb-[25pxpx]">
             <div
               className="hover:cursor-pointer flex items-center group"
               onClick={() => {
@@ -199,10 +207,10 @@ const Main = ({ children }: any) => {
                 })}
               </select>
 
-              <div className="space-y-[50px] flex flex-col items-center">
+              <div className="flex flex-col items-center">
                 {children}
 
-                <div className="w-[280px] relative">
+                <div className="mt-[50px] w-[280px] relative">
                   <svg
                     className="absolute w-[30px] h-[30px] z-50 top-[50%] translate-y-[-50%] left-[50px]"
                     viewBox="0 0 24 24"
@@ -228,7 +236,9 @@ const Main = ({ children }: any) => {
                     </g>
                   </svg>
                   <button
-                    className="btn h12 w-full"
+                    className={` btn h12 w-full ${
+                      isProcessing ? "hidden" : ""
+                    }`}
                     onClick={() => {
                       writeFile(currentFile);
                     }}
