@@ -1,7 +1,11 @@
 import React from "react";
 import { useAppDispatch, useAppSelector } from "../store/store";
-import { fetchMetadataById } from "../store/features/fileThunks";
-import { setIsProcessing, updateMovieById } from "../store/features/filesSlice";
+import { fetchMetadataById, fetchTmdbId } from "../store/features/fileThunks";
+import {
+  requestTmdb,
+  setIsProcessing,
+  updateMovieById,
+} from "../store/features/filesSlice";
 import { ExcelData } from "../types/types";
 
 interface MetadataButtonProps {
@@ -21,9 +25,16 @@ const MetadataButton: React.FC<MetadataButtonProps> = (props) => {
     await Promise.all(
       currentFile.data.map(async (movie) => {
         try {
+          const tmdbRow = await dispatch(fetchTmdbId(movie));
           const row = await dispatch(
-            fetchMetadataById({ movie, metadataOptions: options })
+            fetchMetadataById({
+              movie: tmdbRow.payload as ExcelData,
+              metadataOptions: options,
+            })
           );
+
+          console.log("METADATA", row.payload);
+
           dispatch(updateMovieById(row.payload as ExcelData));
           return row;
         } catch (error) {
@@ -32,6 +43,8 @@ const MetadataButton: React.FC<MetadataButtonProps> = (props) => {
         }
       })
     );
+
+    if (!currentFile.tmdb_requested) dispatch(requestTmdb(currentFile.index));
 
     dispatch(setIsProcessing(false));
   };

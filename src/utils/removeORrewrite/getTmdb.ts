@@ -39,10 +39,7 @@ const getTMDB = async (
       id = response.data.movie_results[0].id;
     }
 
-    setUpdatedFile((prev: ExcelData[]) => [
-      ...prev,
-      { ...movie, tmdb_id: `${id}` },
-    ]);
+    setUpdatedFile((prev: ExcelData[]) => [...prev, { ...movie, tmdb_id: id }]);
   } catch (error) {
     setUpdatedFile((prev: ExcelData[]) => [
       ...prev,

@@ -1,7 +1,14 @@
 import React from "react";
 import { useAppDispatch, useAppSelector } from "../store/store";
-import { fetchTranslationsById } from "../store/features/fileThunks";
-import { setIsProcessing, updateMovieById } from "../store/features/filesSlice";
+import {
+  fetchTmdbId,
+  fetchTranslationsById,
+} from "../store/features/fileThunks";
+import {
+  requestTmdb,
+  setIsProcessing,
+  updateMovieById,
+} from "../store/features/filesSlice";
 import { ExcelData } from "../types/types";
 
 interface TranslationsButtonProps {
@@ -15,13 +22,19 @@ const TranslationsButton: React.FC<TranslationsButtonProps> = (props) => {
 
   const handleGetTranslationsClick = async () => {
     if (!currentFile?.data.length) return;
-
     dispatch(setIsProcessing(true));
 
     await Promise.all(
       currentFile.data.map(async (movie) => {
         try {
-          const row = await dispatch(fetchTranslationsById({ movie, options }));
+          const tmdbRow = await dispatch(fetchTmdbId(movie));
+          const row = await dispatch(
+            fetchTranslationsById({
+              movie: tmdbRow.payload as ExcelData,
+              options,
+            })
+          );
+
           dispatch(updateMovieById(row.payload as ExcelData));
           return row;
         } catch (error) {

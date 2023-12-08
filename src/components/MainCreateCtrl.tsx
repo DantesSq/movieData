@@ -3,7 +3,6 @@ import { useAppDispatch, useAppSelector } from "../store/store";
 import { throttleProgramData } from "../utils/cc/getProgramData";
 import RequestButton from "./RequestButton";
 import { useNavigate } from "react-router-dom";
-import { throttleFindByTitle } from "../utils/cc/findByTitle";
 
 const MainCreateCtrl = () => {
   const { currentFile, isProcessing } = useAppSelector((state) => state.files);

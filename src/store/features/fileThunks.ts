@@ -162,16 +162,18 @@ export const fetchMetadataById = createAsyncThunk(
         tmdb_original_language = data.original_language;
       }
 
+      const eu = "";
+
       const keys: any = {
         ["production_year"]: production_year || tmdb_production_year || "",
         ["country"]: country || tmdb_countries || "",
-        ["genre"]: genre || tmdb_genres || "",
+        ["genre"]: genre?.toLowerCase() || tmdb_genres?.toLowerCase() || "",
         ["duration"]: duration || tmdb_duration || "",
         ["synopsis"]: Synopsis || tmdb_synopsis || "",
         ["original_title"]: tmdb_original_title || "",
         ["original_language"]: original_language || "",
         ["production_companies"]: tmdb_production_companies || "",
-        ["eu"]: "",
+        ["eu"]: eu,
       };
 
       // Getting only metadata that was requested in options
@@ -183,7 +185,7 @@ export const fetchMetadataById = createAsyncThunk(
           }
         }
       }
-
+      console.log("result", result);
       return { ...movie, ...result };
     } catch (error) {
       return { ...emptyOptionsObj, ...movie };
@@ -264,6 +266,53 @@ export const fetchTranslationsById = createAsyncThunk(
       return { ...movie, ...spreadTitleKeys, ...spreadSynopsisKeys };
     } catch (error) {
       return { ...movie, ...emptyTitleKeys, ...emptySynopsisKeys };
+    }
+  }
+);
+
+export const fetchTmdbId = createAsyncThunk(
+  "files/fetchTmdbId",
+  async (movie: ExcelData, { getState }) => {
+    const { imdb_id, tmdb_id, type, spi_code } = movie;
+
+    const corrImdb = imdb_id
+      ?.toString()
+      .slice(imdb_id?.toString().indexOf("/tt") + 1);
+    const ttId =
+      corrImdb?.indexOf("/") === -1
+        ? corrImdb
+        : corrImdb?.slice(0, corrImdb?.indexOf("/"));
+
+    if (tmdb_id || !imdb_id || !ttId) {
+      console.log("here");
+      return movie;
+    }
+
+    try {
+      const options = {
+        method: "GET",
+        url: `https://api.themoviedb.org/3/find/${ttId}?external_source=imdb_id`,
+        headers: {
+          accept: "application/json",
+          Authorization:
+            "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkNWViMTUyY2MwMWIxZGQ3MTFhMDdiZTUwMGRkYmQzNSIsInN1YiI6IjY1MTE3NTEwZTFmYWVkMDEwMGU5ZDQ1NCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.RDD3x2S6wsmVMzYIK46Dicgr-naRFIh1eWEOaTQhJ3M",
+        },
+      };
+
+      const response = await axios(options);
+      console.log("response", response.data);
+      let id: string | null;
+      if (type?.toLowerCase() === `series` || spi_code?.startsWith(`SPY`)) {
+        console.log("inside");
+        id = response.data.tv_results[0].id;
+      } else {
+        id = response.data.movie_results[0].id;
+      }
+      console.log("here not catch", id);
+      return { ...movie, tmdb_id: id };
+    } catch (error) {
+      console.log("catch", imdb_id);
+      return { ...movie, tmdb_id: "" };
     }
   }
 );

@@ -1,7 +1,8 @@
 import React from "react";
 import { useAppDispatch, useAppSelector } from "../store/store";
-import { fetchDirectorById } from "../store/features/fileThunks";
+import { fetchDirectorById, fetchTmdbId } from "../store/features/fileThunks";
 import {
+  requestTmdb,
   setIsProcessing,
   updatePersonsById,
 } from "../store/features/filesSlice";
@@ -19,7 +20,11 @@ const PersonsButton = () => {
     await Promise.all(
       currentFile.data.map(async (movie) => {
         try {
-          const row = await dispatch(fetchDirectorById(movie));
+          const tmdbRow = await dispatch(fetchTmdbId(movie));
+          const row = await dispatch(
+            fetchDirectorById(tmdbRow.payload as ExcelData)
+          );
+
           dispatch(updatePersonsById(row.payload as ExcelData));
           return row;
         } catch (error) {
@@ -28,6 +33,8 @@ const PersonsButton = () => {
         }
       })
     );
+
+    if (!currentFile.tmdb_requested) dispatch(requestTmdb(currentFile.index));
 
     dispatch(setIsProcessing(false));
   };
