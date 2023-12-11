@@ -15,8 +15,6 @@ const DataManipulating = () => {
   const { currentFile, isProcessing, files } = useAppSelector(
     (state) => state.files
   );
-
-  console.log(currentFile?.tmdb_requested, "tmdb_requested");
   const [openTranslations, setOpenTranslations] = React.useState(false);
   const [openMetadata, setOpenMetadata] = React.useState(false);
   const [currentIndex, setCurrentIndex] = React.useState(0);

@@ -33,8 +33,6 @@ const MetadataButton: React.FC<MetadataButtonProps> = (props) => {
             })
           );
 
-          console.log("METADATA", row.payload);
-
           dispatch(updateMovieById(row.payload as ExcelData));
           return row;
         } catch (error) {

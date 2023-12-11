@@ -7,6 +7,7 @@ import {
   tmdbSeriesDetails,
 } from "../../types/types";
 import axios from "axios";
+import { getEuropean } from "../../utils/getAttributes";
 
 export {};
 
@@ -130,7 +131,7 @@ export const fetchMetadataById = createAsyncThunk(
 
       const response = await axios(options);
 
-      if (type === "series") {
+      if (type?.toLowerCase() === "series" || spi_code?.startsWith("SPY")) {
         const data: tmdbSeriesDetails = response.data;
 
         tmdb_original_title = data.original_name;
@@ -145,7 +146,7 @@ export const fetchMetadataById = createAsyncThunk(
           .join(", ");
         tmdb_production_year = Number(data.first_air_date.slice(0, 4));
         tmdb_original_language = data.original_language;
-      } else if (type === "movie") {
+      } else {
         const data: tmdbMovieDetails = response.data;
 
         tmdb_original_title = data.original_title;
@@ -162,7 +163,7 @@ export const fetchMetadataById = createAsyncThunk(
         tmdb_original_language = data.original_language;
       }
 
-      const eu = "";
+      const eu = getEuropean(tmdb_countries);
 
       const keys: any = {
         ["production_year"]: production_year || tmdb_production_year || "",
@@ -185,7 +186,6 @@ export const fetchMetadataById = createAsyncThunk(
           }
         }
       }
-      console.log("result", result);
       return { ...movie, ...result };
     } catch (error) {
       return { ...emptyOptionsObj, ...movie };
@@ -284,7 +284,6 @@ export const fetchTmdbId = createAsyncThunk(
         : corrImdb?.slice(0, corrImdb?.indexOf("/"));
 
     if (tmdb_id || !imdb_id || !ttId) {
-      console.log("here");
       return movie;
     }
 
@@ -300,18 +299,14 @@ export const fetchTmdbId = createAsyncThunk(
       };
 
       const response = await axios(options);
-      console.log("response", response.data);
       let id: string | null;
       if (type?.toLowerCase() === `series` || spi_code?.startsWith(`SPY`)) {
-        console.log("inside");
         id = response.data.tv_results[0].id;
       } else {
         id = response.data.movie_results[0].id;
       }
-      console.log("here not catch", id);
       return { ...movie, tmdb_id: id };
     } catch (error) {
-      console.log("catch", imdb_id);
       return { ...movie, tmdb_id: "" };
     }
   }
