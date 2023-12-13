@@ -96,14 +96,15 @@ export interface tmdbMovieDetails {
   id: number;
   imdb_id: string;
   original_language: string;
-  original_title: string;
   genres: genre[];
   production_countries: production_country[];
   production_companies: production_company[];
   runtime: number;
   release_date: string;
   overview: string;
+
   title: string;
+  original_title: string;
 }
 
 export interface tmdbSeriesDetails {

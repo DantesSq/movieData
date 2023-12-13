@@ -10,11 +10,30 @@ import { throttleRequestDirector } from "../utils/removeORrewrite/getDirectorsId
 import PlannerButton from "./PlannerButton";
 import PersonsButton from "./PersonsButton";
 import Processing from "./Processing";
+import { getIndependent } from "../utils/getAttributes";
+
+const checkGetIndependentFunction = [
+  "Deutsch Filmproduktion, Dko Inc, Canal+ Polska", // Dependent
+  "Kino Tv, Discover", // Dependent
+  "fox 2000 pictures, polska films, dko inc", // Empty
+  "fox 2000 pictures, polska entertainment, discovery channel", // Dependent
+  "kino Tv Warszawa, Dko inc", // Dependent
+  "Omelo Production Studio, canal+ austria", // Dependent
+  "orf, Omelo Production Studio", // Dependent
+  "dko inc, filsd corp, llc stanti", // Empty
+  "fox 2000 pictures, warsaw filminstitut, zespół filmowy Grupa Kol", // Independent
+  "Braun Entertainment Group", // Independent
+];
 
 const DataManipulating = () => {
   const { currentFile, isProcessing, files } = useAppSelector(
     (state) => state.files
   );
+
+  checkGetIndependentFunction.forEach((item) =>
+    console.log(item, " --> ", getIndependent(item))
+  );
+
   const [openTranslations, setOpenTranslations] = React.useState(false);
   const [openMetadata, setOpenMetadata] = React.useState(false);
   const [currentIndex, setCurrentIndex] = React.useState(0);
@@ -154,12 +173,12 @@ const DataManipulating = () => {
         </div>
 
         {/* To implement next */}
-        {/* <RequestButton
+        <RequestButton
           text="Get Series Episodes Data"
           requestFunction={throttleRequestSeriesDirector}
           setCurrentIndex={setCurrentIndex}
           classes="w-full "
-        /> */}
+        />
 
         {/* <PlannerButton /> */}
 

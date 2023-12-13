@@ -91,6 +91,7 @@ export const throttleRequestSeriesDirector = async (
       setCurrentIndex(0);
       return;
     }
+    // console.log(`[${index + 1}/${excelData.length}] working...`);
     setCurrentIndex(index + 1);
 
     const movie = excelData[index];

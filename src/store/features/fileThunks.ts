@@ -7,14 +7,14 @@ import {
   tmdbSeriesDetails,
 } from "../../types/types";
 import axios from "axios";
-import { getEuropean } from "../../utils/getAttributes";
+import { getEuropean, getIndependent } from "../../utils/getAttributes";
 
 export {};
 
 export const fetchDirectorById = createAsyncThunk(
   "files/fetchDirectorById",
   async (movie: ExcelData, { getState }) => {
-    const { spi_code, type, tmdb_id } = movie;
+    const { spi_code, type, tmdb_id, title } = movie;
 
     let urlType;
     if (type?.toLowerCase() === `series` || spi_code?.startsWith(`SPY`)) {
@@ -71,7 +71,7 @@ export const fetchMetadataById = createAsyncThunk(
       original_title,
       original_language,
       production_companies,
-      eu,
+      // attributes,
     } = movie;
 
     const excelData: any = {
@@ -83,7 +83,7 @@ export const fetchMetadataById = createAsyncThunk(
       ["original_title"]: original_title || "",
       ["original_language"]: original_language || "",
       ["production_companies"]: production_companies || "",
-      ["eu"]: eu,
+      ["attributes"]: "",
     }; // metadata from movie
 
     // Create empty object with metadata keys
@@ -98,7 +98,7 @@ export const fetchMetadataById = createAsyncThunk(
       !metadataOptions ||
       !tmdb_id
     ) {
-      return { ...emptyOptionsObj, ...movie };
+      return { ...movie, ...emptyOptionsObj };
     }
 
     // Setting type & url (tv/movie)
@@ -117,7 +117,8 @@ export const fetchMetadataById = createAsyncThunk(
         tmdb_synopsis,
         tmdb_original_title,
         tmdb_original_language,
-        tmdb_production_companies;
+        tmdb_production_companies,
+        tmdb_countries_iso;
       // Making request
       const options = {
         method: "GET",
@@ -133,14 +134,18 @@ export const fetchMetadataById = createAsyncThunk(
 
       if (type?.toLowerCase() === "series" || spi_code?.startsWith("SPY")) {
         const data: tmdbSeriesDetails = response.data;
-
+        if (!title) movie.title = data.name;
         tmdb_original_title = data.original_name;
         tmdb_synopsis = data.overview;
         tmdb_duration = data.episode_run_time[0];
         tmdb_genres = data.genres.map((item) => item.name).join(", ");
         tmdb_countries = data.production_countries
-          .map((item) => item.name)
+          .map((item) => item.iso_3166_1)
           .join(", ");
+
+        tmdb_countries_iso = data.production_countries
+          .map((item) => item.iso_3166_1)
+          .join(",");
         tmdb_production_companies = data.production_companies
           .map((item) => item.name)
           .join(", ");
@@ -149,11 +154,15 @@ export const fetchMetadataById = createAsyncThunk(
       } else {
         const data: tmdbMovieDetails = response.data;
 
+        if (!title) movie.title = data.title;
         tmdb_original_title = data.original_title;
         tmdb_synopsis = data.overview;
         tmdb_genres = data.genres.map((item) => item.name).join(", ");
         tmdb_countries = data.production_countries
           .map((item) => item.name)
+          .join(", ");
+        tmdb_countries_iso = data.production_countries
+          .map((item) => item.iso_3166_1)
           .join(", ");
         tmdb_production_companies = data.production_companies
           .map((item) => item.name)
@@ -164,6 +173,13 @@ export const fetchMetadataById = createAsyncThunk(
       }
 
       const eu = getEuropean(tmdb_countries);
+      const independent = getIndependent(tmdb_production_companies);
+
+      const attributes = eu
+        ? independent
+          ? eu + ", " + independent
+          : eu
+        : independent;
 
       const keys: any = {
         ["production_year"]: production_year || tmdb_production_year || "",
@@ -174,7 +190,7 @@ export const fetchMetadataById = createAsyncThunk(
         ["original_title"]: tmdb_original_title || "",
         ["original_language"]: original_language || "",
         ["production_companies"]: tmdb_production_companies || "",
-        ["eu"]: eu,
+        ["attributes"]: attributes,
       };
 
       // Getting only metadata that was requested in options
@@ -186,9 +202,11 @@ export const fetchMetadataById = createAsyncThunk(
           }
         }
       }
+
+      // console.log(movie, result);
       return { ...movie, ...result };
     } catch (error) {
-      return { ...emptyOptionsObj, ...movie };
+      return { ...movie, ...emptyOptionsObj };
     }
   }
 );

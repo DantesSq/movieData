@@ -6,7 +6,7 @@ const getProgramRequest = async (
   movie: ExcelData,
   setUpdatedFile: (updateFunction: (prev: ExcelData[]) => ExcelData[]) => void
 ) => {
-  const { spi_code } = movie;
+  const { spi_code, title } = movie;
   if (!spi_code) {
     setUpdatedFile((prev: any) => [
       ...prev,
@@ -16,8 +16,7 @@ const getProgramRequest = async (
   }
 
   try {
-    const IdentifyToken = "c2a406ca3dd7425bbc5d2ba361236383";
-
+    const IdentifyToken = "622869a6e8354c1e9c25404feb8464af";
     const headers = {
       Accept: "text/plain",
       IdentifyToken,
