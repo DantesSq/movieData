@@ -20,9 +20,17 @@ export type ExcelData = {
 
   original_title: string | null;
 
+  Season?: number;
+  SeasonTitle?: string;
+  SeasonSynopsis?: string;
+  Episode?: number;
+  EpisodeTitle?: string;
+  EpisodeSynopsis?: string;
+
   series_title: string | null;
   episode_title: string | null;
   series_duration: number | null;
+  Channels: string | null;
 };
 
 export interface Translation {

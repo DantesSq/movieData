@@ -1,4 +1,4 @@
-import { ExcelData } from "../types/types";
+import { ExcelData } from "../../types/types";
 
 export type Series = {
   series_spi?: string | null;
@@ -11,6 +11,8 @@ export type Series = {
   genre: string | null;
   number_of_episodes: number;
   country: string | null;
+
+  Channels: string;
 };
 
 type Episodes = {
@@ -30,6 +32,13 @@ export const divideIntoSeries = (data: ExcelData[]) => {
 
   for (const index in data) {
     const episode = data[index];
+    console.log(episode);
+    if (
+      !episode.spi_code?.startsWith("SPY") ||
+      episode.type?.toLowerCase() !== "series"
+    )
+      continue;
+
     let episodeSeason = episode.spi_code?.slice(10, 12);
     if (episodeSeason === "00") episodeSeason = "01";
 
@@ -45,6 +54,7 @@ export const divideIntoSeries = (data: ExcelData[]) => {
         number_of_episodes: 0,
         country: episode.country,
         Seasons: [],
+        Channels: episode.Channels || "",
       };
 
       episodesArr = [];
@@ -88,6 +98,7 @@ export const divideIntoSeries = (data: ExcelData[]) => {
         number_of_episodes: 0,
         country: episode.country,
         Seasons: [],
+        Channels: episode.Channels || "",
       };
       episodesArr = [];
 

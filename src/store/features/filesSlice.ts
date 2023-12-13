@@ -20,6 +20,7 @@ interface FileState {
   currentFile: excelFile | null;
 
   ramowkaFile: any;
+  seriesData: ExcelData[];
 }
 
 const initialState: FileState = {
@@ -29,6 +30,7 @@ const initialState: FileState = {
   isProcessing: false,
   currentFile: null,
   ramowkaFile: [],
+  seriesData: [],
 };
 
 export const FileSlice = createSlice({
@@ -129,6 +131,16 @@ export const FileSlice = createSlice({
         }
       }
     },
+    addSeriesData: (state, action: PayloadAction<ExcelData[]>) => {
+      state.seriesData.push(...action.payload);
+    },
+    setSeriesData: (state) => {
+      if (state.currentFile?.data) {
+        state.currentFile.data = state.seriesData;
+
+        state.seriesData = [];
+      }
+    },
   },
 });
 
@@ -148,4 +160,6 @@ export const {
   updatePersonsById,
   updateMovieById,
   clearRawFiles,
+  addSeriesData,
+  setSeriesData,
 } = FileSlice.actions;

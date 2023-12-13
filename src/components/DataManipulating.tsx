@@ -11,6 +11,7 @@ import PlannerButton from "./PlannerButton";
 import PersonsButton from "./PersonsButton";
 import Processing from "./Processing";
 import { getIndependent } from "../utils/getAttributes";
+import SeriesButton from "./SeriesButton";
 
 const checkGetIndependentFunction = [
   "Deutsch Filmproduktion, Dko Inc, Canal+ Polska", // Dependent
@@ -30,9 +31,9 @@ const DataManipulating = () => {
     (state) => state.files
   );
 
-  checkGetIndependentFunction.forEach((item) =>
-    console.log(item, " --> ", getIndependent(item))
-  );
+  // checkGetIndependentFunction.forEach((item) =>
+  //   console.log(item, " --> ", getIndependent(item))
+  // );
 
   const [openTranslations, setOpenTranslations] = React.useState(false);
   const [openMetadata, setOpenMetadata] = React.useState(false);
@@ -172,18 +173,27 @@ const DataManipulating = () => {
           </div>
         </div>
 
-        {/* To implement next */}
-        <RequestButton
+        {/* Series Data */}
+        {/* <RequestButton
           text="Get Series Episodes Data"
           requestFunction={throttleRequestSeriesDirector}
           setCurrentIndex={setCurrentIndex}
           classes="w-full "
-        />
+        /> */}
+
+        <SeriesButton />
+
+        {/* <RequestButton
+          text="GET IMDB"
+          requestFunction={throttleRequestSeries}
+          setCurrentIndex={setCurrentIndex}
+          classes="w-full "
+        /> */}
 
         {/* <PlannerButton /> */}
 
         {/* Switch to CC */}
-        <div className="relative w-[280px]">
+        {/* <div className="relative w-[280px]">
           <svg
             className="absolute w-[30px] h-[30px] z-50 fill-black top-[50%] translate-y-[-50%] left-[10px] "
             viewBox="0 0 24 24"
@@ -206,7 +216,7 @@ const DataManipulating = () => {
           >
             Switch to CC
           </button>
-        </div>
+        </div> */}
       </div>
 
       <div className={isProcessing ? "" : "hidden"}>

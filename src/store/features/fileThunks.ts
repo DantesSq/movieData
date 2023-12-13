@@ -2,6 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import {
   ExcelData,
   Person,
+  Season,
   Translation,
   tmdbMovieDetails,
   tmdbSeriesDetails,
@@ -326,6 +327,78 @@ export const fetchTmdbId = createAsyncThunk(
       return { ...movie, tmdb_id: id };
     } catch (error) {
       return { ...movie, tmdb_id: "" };
+    }
+  }
+);
+
+export const fetchSeriesData = createAsyncThunk(
+  "files/fetchSeriesData",
+  async (series: ExcelData, { getState }) => {
+    let episodesArr: ExcelData[] = [];
+
+    const { tmdb_id, type, spi_code } = series;
+
+    if (
+      !tmdb_id ||
+      (type?.toLowerCase() !== "series" && !spi_code?.startsWith("SPY"))
+    )
+      return [
+        {
+          ...series,
+          Season: "",
+          SeasonTitle: "",
+          SeasonSynopsis: "",
+          Episode: "",
+          EpisodeTitle: "",
+          EpisodeSynopsis: "",
+          director: "",
+        },
+      ];
+
+    let id = 1;
+    let seasonExists = true;
+
+    for (id; seasonExists; id++) {
+      const options = {
+        method: "GET",
+        url: `https://api.themoviedb.org/3/tv/${tmdb_id}/season/${id}?language=en-US`,
+        headers: {
+          accept: "application/json",
+          Authorization:
+            "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkNWViMTUyY2MwMWIxZGQ3MTFhMDdiZTUwMGRkYmQzNSIsInN1YiI6IjY1MTE3NTEwZTFmYWVkMDEwMGU5ZDQ1NCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.RDD3x2S6wsmVMzYIK46Dicgr-naRFIh1eWEOaTQhJ3M",
+        },
+      };
+
+      try {
+        const response = await axios(options);
+        const data: Season = response.data;
+        if (data.episodes)
+          data.episodes.forEach((episode, id) => {
+            const directors = episode.crew.filter(
+              (person) => person.job === "Director"
+            );
+            const directors_names = directors
+              .map((director) => director.name)
+              .join(", ");
+            const year = episode.air_date.slice(0, 4);
+            const duration = episode.runtime?.toString();
+            episodesArr.push({
+              ...series,
+              production_year: year || series.production_year,
+              duration: duration || series.duration,
+              Season: data.season_number,
+              SeasonTitle: data.name,
+              SeasonSynopsis: data.overview,
+              Episode: id + 1,
+              EpisodeTitle: episode.name,
+              EpisodeSynopsis: episode.overview,
+              director: directors_names,
+            });
+          });
+      } catch (error) {
+        seasonExists = false;
+        return episodesArr;
+      }
     }
   }
 );

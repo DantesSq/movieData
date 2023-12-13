@@ -116,10 +116,10 @@ export const getIndependent = (tmdb_companies: string | undefined) => {
   const companies = tmdb_companies.split(", ");
 
   for (let index = 0; index < companies.length; index++) {
-    const company = companies[index];
+    const company = companies[index].toLowerCase().split(" ");
 
     dependent.forEach((dependent_copmany) => {
-      if (company.toLowerCase().includes(dependent_copmany)) {
+      if (company.includes(dependent_copmany)) {
         values.dependent = true; // Check if company is DEPENDENT
         values.independent = false;
       }
@@ -130,14 +130,12 @@ export const getIndependent = (tmdb_companies: string | undefined) => {
       values.independent = false;
 
       independent.forEach((independent_company) => {
-        if (company.toLowerCase().includes(independent_company))
-          values.independent = true; // Check if company is INDEPENDENT
+        if (company.includes(independent_company)) values.independent = true; // Check if company is INDEPENDENT
       });
 
       if (!values.independent) {
         keywords_independent.forEach((keyword) => {
-          if (company.toLowerCase().includes(keyword))
-            values.independent = true;
+          if (company.includes(keyword)) values.independent = true;
         });
       }
 

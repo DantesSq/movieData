@@ -1,11 +1,11 @@
 import * as XLSX from "xlsx";
-import { Series } from "../divideIntoSeries";
+import { Series } from "./divideIntoSeries";
 import React from "react";
 
-export const writeImportFile = (currentFile: Series[]) => {
+export const writeImportFileSeries = (importData: Series[]) => {
   let Program: any = [];
   let ProgramVersion: any = [];
-  const SerieSheet = currentFile.map((series) => {
+  const SerieSheet = importData.map((series) => {
     return {
       ["Series Number"]: series.series_spi,
       ["Title"]: series.title,
@@ -26,8 +26,8 @@ export const writeImportFile = (currentFile: Series[]) => {
       ["Type 2"]: series.genre?.split(", ")[1] ? "MG" : "",
       ["Genre 3"]: series.genre?.split(", ")[2] || "",
       ["Type 3"]: series.genre?.split(", ")[2] ? "MG" : "",
-      ["Channel 1"]: "",
-      ["Channel 2"]: "",
+      ["Channel 1"]: series.Channels?.split(", ")[0] || "",
+      ["Channel 2"]: series.Channels?.split(", ")[1] || "",
       ["Production Country"]: series.country?.split(", ")[0] || "",
       ["Production Country 2"]: series.country?.split(", ")[1] || "",
       ["Production Country 3"]: series.country?.split(", ")[2] || "",
@@ -35,7 +35,7 @@ export const writeImportFile = (currentFile: Series[]) => {
     };
   });
 
-  const ProgramSheet = currentFile.map((series) => {
+  const ProgramSheet = importData.map((series) => {
     return series.Seasons?.map((season) => {
       return season.map((episode, index) => {
         let episodeSeason = episode.episode_spi?.slice(10, 12);
@@ -73,7 +73,7 @@ export const writeImportFile = (currentFile: Series[]) => {
     });
   });
 
-  const ProgramVersionSheet = currentFile.map((series) => {
+  const ProgramVersionSheet = importData.map((series) => {
     return series.Seasons?.map((season) => {
       return season.map((episode, index) => {
         let episodeSeason = episode.episode_spi?.slice(10, 12);
@@ -115,6 +115,7 @@ export const writeImportFile = (currentFile: Series[]) => {
     Object.values(obj)
   );
   // Create a worksheet from the array of arrays
+  if (!dataArraySerie.length) return;
   const wsSerie = XLSX.utils.aoa_to_sheet([
     Object.keys(SerieSheet[0]),
     ...dataArraySerie,

@@ -19,6 +19,8 @@ const getSeriesRequest = async (
     const response = await axios(
       `https://imdb-api.projects.thetuhin.com/search?query=${title}`
     );
+
+    console.log(response);
     // const options = {
     //   method: "GET",
     //   url: `https://api.themoviedb.org/3/search/movie?query=${title}`, // series
@@ -48,7 +50,7 @@ const getSeriesRequest = async (
       if (bool) return;
       const result = results[id];
 
-      if (result.type.toLowerCase() === "tvseries") {
+      if (result.type.toLowerCase().includes("tvseries")) {
         setUpdatedFile((prev: any) => [
           ...prev,
           {
