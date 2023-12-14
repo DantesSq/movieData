@@ -12,7 +12,7 @@ const MainCreateCtrl = () => {
   const navigate = useNavigate();
 
   React.useEffect(() => {
-    navigate("/");
+    // navigate("/");
   }, []);
 
   if (!currentFile) return <>No Current File</>;
@@ -50,7 +50,7 @@ const MainCreateCtrl = () => {
           <RequestButton
             text="Get data from CC"
             classes="w-[280px] btn"
-            requestFunction={throttleFindByTitle}
+            requestFunction={throttleProgramData}
             setCurrentIndex={setCurrentIndex}
           />
         </div>

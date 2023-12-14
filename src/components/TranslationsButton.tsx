@@ -10,6 +10,7 @@ import {
   updateMovieById,
 } from "../store/features/filesSlice";
 import { ExcelData } from "../types/types";
+import { timeout } from "../utils/timeoutPromise";
 
 interface TranslationsButtonProps {
   options: string[];
@@ -24,25 +25,55 @@ const TranslationsButton: React.FC<TranslationsButtonProps> = (props) => {
     if (!currentFile?.data.length) return;
     dispatch(setIsProcessing(true));
 
-    await Promise.all(
-      currentFile.data.map(async (movie) => {
-        try {
-          const tmdbRow = await dispatch(fetchTmdbId(movie));
-          const row = await dispatch(
-            fetchTranslationsById({
-              movie: tmdbRow.payload as ExcelData,
-              options,
-            })
-          );
+    for (let index = 0; index < currentFile.data.length; index++) {
+      let movie = currentFile.data[index];
 
-          dispatch(updateMovieById(row.payload as ExcelData));
-          return row;
-        } catch (error) {
-          console.error(error);
-          return movie;
+      try {
+        if (!currentFile.tmdb_requested) {
+          const tmdbRow = await dispatch(fetchTmdbId(movie));
+          movie = tmdbRow.payload as ExcelData;
+
+          if (index + 1 === currentFile.data.length)
+            dispatch(requestTmdb(currentFile.index));
         }
-      })
-    );
+        const row = await dispatch(
+          fetchTranslationsById({
+            movie: movie,
+            options,
+          })
+        );
+        dispatch(updateMovieById(row.payload as ExcelData));
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    // await Promise.all(
+    //   currentFile.data.map(async (movie) => {
+    //     try {
+    //       const tmdbRowPromise = dispatch(fetchTmdbId(movie));
+    //       const tmdbRow: any = await Promise.race([
+    //         tmdbRowPromise,
+    //         timeout(10),
+    //       ]);
+
+    //       const rowPromise = dispatch(
+    //         fetchTranslationsById({
+    //           movie: tmdbRow.payload as ExcelData,
+    //           options,
+    //         })
+    //       );
+
+    //       const row: any = await Promise.race([rowPromise, timeout(15)]);
+
+    // dispatch(updateMovieById(row.payload as ExcelData));
+    //       return row;
+    //     } catch (error) {
+    //       console.error(error);
+    //       return movie;
+    //     }
+    //   })
+    // );
 
     dispatch(setIsProcessing(false));
   };

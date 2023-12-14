@@ -84,7 +84,9 @@ const Main = ({ children }: any) => {
             <div
               className="hover:cursor-pointer flex items-center group"
               onClick={() => {
-                writeFile({ name: "app template.xlsx", data: dataTemplate });
+                if (!currentFile) return;
+                // writeFile({ name: "app template.xlsx", data: dataTemplate });
+                writeFile(currentFile);
               }}
             >
               <svg

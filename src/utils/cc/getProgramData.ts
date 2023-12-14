@@ -42,6 +42,7 @@ const getProgramRequest = async (
       Channels,
       Seasons,
       ProgramVersions,
+      OriginalLanguage,
     } = data;
 
     if (Seasons) {
@@ -56,7 +57,7 @@ const getProgramRequest = async (
       .map((item) => item.Name)
       .join(", ");
     const channels = Channels.map((item) => item.Name).join(", ");
-
+    // console.log(data);
     // if (spi_code.toLowerCase() !== OriginalNumber.toLowerCase() && spi_code.toLowerCase() !== Number.toLowerCase() ) {
     //   const ProgramVersionsSPI = ProgramVersions.map(item=>item.Number.toLowerCase())
     // //   if (!ProgramVersionsSPI.includes(spi_code.toLowerCase())) {
@@ -96,6 +97,7 @@ const getProgramRequest = async (
             ? "Independent"
             : "",
         ["Program Number"]: data.Number || "",
+        OriginalLanguage,
       },
     ]);
   } catch (error) {

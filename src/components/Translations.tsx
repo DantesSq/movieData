@@ -2,6 +2,8 @@ import React from "react";
 import { useAppDispatch, useAppSelector } from "../store/store";
 import { setCheckedLanguage } from "../store/features/requestOptionsSlice";
 import TranslationsButton from "./TranslationsButton";
+import RequestButtonNew from "./RequestButtonNew";
+import { fetchTranslationsById } from "../store/features/fileThunks";
 
 const Translations = ({
   setOpenTranslations,
@@ -93,7 +95,12 @@ const Translations = ({
             Cancel
           </button>
           <div onClick={() => setOpenTranslations(false)}>
-            <TranslationsButton options={options} />
+            {/* <TranslationsButton options={options} /> */}
+            <RequestButtonNew
+              options={options}
+              requestFunction={fetchTranslationsById}
+              btnText="Get Translations"
+            />
           </div>
         </div>
       </div>

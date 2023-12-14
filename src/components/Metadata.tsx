@@ -2,6 +2,9 @@ import React from "react";
 import { useAppDispatch, useAppSelector } from "../store/store";
 import { setCheckedMetadata } from "../store/features/requestOptionsSlice";
 import MetadataButton from "./MetadataButton";
+import RequestButtonNew from "./RequestButtonNew";
+import { updateMovieById } from "../store/features/filesSlice";
+import { fetchMetadataById } from "../store/features/fileThunks";
 
 const Metadata = ({
   setOpenMetadata,
@@ -89,7 +92,12 @@ const Metadata = ({
             Cancel
           </button>
           <div onClick={() => setOpenMetadata(false)}>
-            <MetadataButton options={options} />
+            {/* <MetadataButton options={options} /> */}
+            <RequestButtonNew
+              requestFunction={fetchMetadataById}
+              btnText="Get Metadata"
+              options={options}
+            />
           </div>
         </div>
       </div>

@@ -2,11 +2,13 @@ import React from "react";
 import { useAppDispatch, useAppSelector } from "../store/store";
 import {
   addSeriesData,
+  requestTmdb,
   setIsProcessing,
   setSeriesData,
 } from "../store/features/filesSlice";
 import { fetchSeriesData, fetchTmdbId } from "../store/features/fileThunks";
 import { ExcelData } from "../types/types";
+import { timeout } from "../utils/timeoutPromise";
 
 const SeriesButton = () => {
   const dispatch = useAppDispatch();
@@ -15,22 +17,47 @@ const SeriesButton = () => {
   const handleGetTranslationsClick = async () => {
     if (!currentFile?.data.length) return;
     dispatch(setIsProcessing(true));
-    await Promise.all(
-      currentFile.data.map(async (movie) => {
-        try {
-          const tmdbRow = await dispatch(fetchTmdbId(movie));
-          const row = await dispatch(
-            fetchSeriesData(tmdbRow.payload as ExcelData)
-          );
 
-          dispatch(addSeriesData(row.payload as ExcelData[]));
-          return row;
-        } catch (error) {
-          console.error(error);
-          return movie;
+    for (let index = 0; index < currentFile.data.length; index++) {
+      let movie = currentFile.data[index];
+
+      try {
+        if (!currentFile.tmdb_requested) {
+          const tmdbRow = await dispatch(fetchTmdbId(movie));
+          movie = tmdbRow.payload as ExcelData;
+          if (index + 1 === currentFile.data.length)
+            dispatch(requestTmdb(currentFile.index));
         }
-      })
-    );
+        const row = await dispatch(fetchSeriesData(movie));
+        dispatch(addSeriesData(row.payload as ExcelData[]));
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    // await Promise.all(
+    //   currentFile.data.map(async (movie) => {
+    //     try {
+    //       const tmdbRowPromise = dispatch(fetchTmdbId(movie));
+    //       const tmdbRow: any = await Promise.race([
+    //         tmdbRowPromise,
+    //         timeout(10),
+    //       ]);
+
+    //       const rowPromise = dispatch(
+    //         fetchSeriesData(tmdbRow.payload as ExcelData)
+    //       );
+
+    //       const row: any = await Promise.race([rowPromise, timeout(20)]);
+
+    // dispatch(addSeriesData(row.payload as ExcelData[]));
+    //       return row;
+    //     } catch (error) {
+    //       console.error(error);
+    //       return movie;
+    //     }
+    //   })
+    // );
 
     dispatch(setSeriesData());
     dispatch(setIsProcessing(false));

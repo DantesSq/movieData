@@ -7,6 +7,7 @@ import {
   updateMovieById,
 } from "../store/features/filesSlice";
 import { ExcelData } from "../types/types";
+import { timeout } from "../utils/timeoutPromise";
 
 interface MetadataButtonProps {
   options: string[];
@@ -22,25 +23,25 @@ const MetadataButton: React.FC<MetadataButtonProps> = (props) => {
 
     dispatch(setIsProcessing(true));
 
-    await Promise.all(
-      currentFile.data.map(async (movie) => {
-        try {
-          const tmdbRow = await dispatch(fetchTmdbId(movie));
-          const row = await dispatch(
-            fetchMetadataById({
-              movie: tmdbRow.payload as ExcelData,
-              metadataOptions: options,
-            })
-          );
+    const delay = (ms: number) =>
+      new Promise((resolve) => setTimeout(resolve, ms));
+    for (let index = 0; index < currentFile.data.length; index++) {
+      const movie = currentFile.data[index];
 
-          dispatch(updateMovieById(row.payload as ExcelData));
-          return row;
-        } catch (error) {
-          console.error(error);
-          return movie;
-        }
-      })
-    );
+      try {
+        const tmdbRow = await dispatch(fetchTmdbId(movie));
+        const row = await dispatch(
+          fetchMetadataById({
+            movie: tmdbRow.payload as ExcelData,
+            options,
+          })
+        );
+
+        dispatch(updateMovieById(row.payload as ExcelData));
+      } catch (error) {
+        console.error(error);
+      }
+    }
 
     if (!currentFile.tmdb_requested) dispatch(requestTmdb(currentFile.index));
 

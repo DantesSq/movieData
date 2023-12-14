@@ -17,10 +17,16 @@ export const fetchDirectorById = createAsyncThunk(
   async (movie: ExcelData, { getState }) => {
     const { spi_code, type, tmdb_id, title } = movie;
 
+    if (!tmdb_id) return movie;
+
     let urlType;
     if (type?.toLowerCase() === `series` || spi_code?.startsWith(`SPY`)) {
       urlType = "tv";
-    } else urlType = "movie";
+      movie.type = "Series";
+    } else {
+      urlType = "movie";
+      movie.type = "Movie";
+    }
 
     const options = {
       method: "GET",
@@ -28,7 +34,7 @@ export const fetchDirectorById = createAsyncThunk(
       headers: {
         accept: "application/json",
         Authorization:
-          "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkNWViMTUyY2MwMWIxZGQ3MTFhMDdiZTUwMGRkYmQzNSIsInN1YiI6IjY1MTE3NTEwZTFmYWVkMDEwMGU5ZDQ1NCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.RDD3x2S6wsmVMzYIK46Dicgr-naRFIh1eWEOaTQhJ3M",
+          "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4Yjg1ODRjNDAxZjJlMjk2N2Q5ZDYxOTAwZjliNzY4NSIsInN1YiI6IjY1MTE3NTEwZTFmYWVkMDEwMGU5ZDQ1NCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.kQb7XrVN7dVgI4s6DpD4Yww5yHjU6qkEPEW6HRMVbg4",
       },
     };
 
@@ -53,10 +59,10 @@ export const fetchDirectorById = createAsyncThunk(
 export const fetchMetadataById = createAsyncThunk(
   "files/fetchMetadataById",
   async (
-    requestData: { movie: ExcelData; metadataOptions: string[] },
+    requestData: { movie: ExcelData; options: string[] },
     { getState }
   ) => {
-    const { movie, metadataOptions } = requestData;
+    const { movie, options: metadataOptions } = requestData;
     const {
       tmdb_id,
       genre,
@@ -127,7 +133,7 @@ export const fetchMetadataById = createAsyncThunk(
         headers: {
           accept: "application/json",
           Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkNWViMTUyY2MwMWIxZGQ3MTFhMDdiZTUwMGRkYmQzNSIsInN1YiI6IjY1MTE3NTEwZTFmYWVkMDEwMGU5ZDQ1NCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.RDD3x2S6wsmVMzYIK46Dicgr-naRFIh1eWEOaTQhJ3M",
+            "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4Yjg1ODRjNDAxZjJlMjk2N2Q5ZDYxOTAwZjliNzY4NSIsInN1YiI6IjY1MTE3NTEwZTFmYWVkMDEwMGU5ZDQ1NCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.kQb7XrVN7dVgI4s6DpD4Yww5yHjU6qkEPEW6HRMVbg4",
         },
       };
 
@@ -136,6 +142,7 @@ export const fetchMetadataById = createAsyncThunk(
       if (type?.toLowerCase() === "series" || spi_code?.startsWith("SPY")) {
         const data: tmdbSeriesDetails = response.data;
         if (!title) movie.title = data.name;
+        if (!type) movie.type = "Series";
         tmdb_original_title = data.original_name;
         tmdb_synopsis = data.overview;
         tmdb_duration = data.episode_run_time[0];
@@ -156,6 +163,7 @@ export const fetchMetadataById = createAsyncThunk(
         const data: tmdbMovieDetails = response.data;
 
         if (!title) movie.title = data.title;
+        if (!type) movie.type = "Movie";
         tmdb_original_title = data.original_title;
         tmdb_synopsis = data.overview;
         tmdb_genres = data.genres.map((item) => item.name).join(", ");
@@ -251,7 +259,7 @@ export const fetchTranslationsById = createAsyncThunk(
         headers: {
           accept: "application/json",
           Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkNWViMTUyY2MwMWIxZGQ3MTFhMDdiZTUwMGRkYmQzNSIsInN1YiI6IjY1MTE3NTEwZTFmYWVkMDEwMGU5ZDQ1NCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.RDD3x2S6wsmVMzYIK46Dicgr-naRFIh1eWEOaTQhJ3M",
+            "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4Yjg1ODRjNDAxZjJlMjk2N2Q5ZDYxOTAwZjliNzY4NSIsInN1YiI6IjY1MTE3NTEwZTFmYWVkMDEwMGU5ZDQ1NCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.kQb7XrVN7dVgI4s6DpD4Yww5yHjU6qkEPEW6HRMVbg4",
         },
       };
 
@@ -313,7 +321,7 @@ export const fetchTmdbId = createAsyncThunk(
         headers: {
           accept: "application/json",
           Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkNWViMTUyY2MwMWIxZGQ3MTFhMDdiZTUwMGRkYmQzNSIsInN1YiI6IjY1MTE3NTEwZTFmYWVkMDEwMGU5ZDQ1NCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.RDD3x2S6wsmVMzYIK46Dicgr-naRFIh1eWEOaTQhJ3M",
+            "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4Yjg1ODRjNDAxZjJlMjk2N2Q5ZDYxOTAwZjliNzY4NSIsInN1YiI6IjY1MTE3NTEwZTFmYWVkMDEwMGU5ZDQ1NCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.kQb7XrVN7dVgI4s6DpD4Yww5yHjU6qkEPEW6HRMVbg4",
         },
       };
 
@@ -365,7 +373,7 @@ export const fetchSeriesData = createAsyncThunk(
         headers: {
           accept: "application/json",
           Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkNWViMTUyY2MwMWIxZGQ3MTFhMDdiZTUwMGRkYmQzNSIsInN1YiI6IjY1MTE3NTEwZTFmYWVkMDEwMGU5ZDQ1NCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.RDD3x2S6wsmVMzYIK46Dicgr-naRFIh1eWEOaTQhJ3M",
+            "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4Yjg1ODRjNDAxZjJlMjk2N2Q5ZDYxOTAwZjliNzY4NSIsInN1YiI6IjY1MTE3NTEwZTFmYWVkMDEwMGU5ZDQ1NCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.kQb7XrVN7dVgI4s6DpD4Yww5yHjU6qkEPEW6HRMVbg4",
         },
       };
 
@@ -397,6 +405,7 @@ export const fetchSeriesData = createAsyncThunk(
           });
       } catch (error) {
         seasonExists = false;
+        console.log("");
         return episodesArr;
       }
     }

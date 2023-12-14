@@ -4,9 +4,11 @@ import { fetchDirectorById, fetchTmdbId } from "../store/features/fileThunks";
 import {
   requestTmdb,
   setIsProcessing,
+  updateMovieById,
   updatePersonsById,
 } from "../store/features/filesSlice";
 import { ExcelData } from "../types/types";
+import { timeout } from "../utils/timeoutPromise";
 
 const PersonsButton = () => {
   const dispatch = useAppDispatch();
@@ -17,22 +19,48 @@ const PersonsButton = () => {
 
     dispatch(setIsProcessing(true));
 
-    await Promise.all(
-      currentFile.data.map(async (movie) => {
-        try {
+    for (let index = 0; index < currentFile.data.length; index++) {
+      let movie = currentFile.data[index];
+      try {
+        if (!currentFile.tmdb_requested) {
           const tmdbRow = await dispatch(fetchTmdbId(movie));
-          const row = await dispatch(
-            fetchDirectorById(tmdbRow.payload as ExcelData)
-          );
-
-          dispatch(updatePersonsById(row.payload as ExcelData));
-          return row;
-        } catch (error) {
-          console.error(error);
-          return movie;
+          movie = tmdbRow.payload as ExcelData;
+          if (index + 1 === currentFile.data.length)
+            dispatch(requestTmdb(currentFile.index));
         }
-      })
-    );
+
+        const row = await dispatch(fetchDirectorById(movie));
+        dispatch(updateMovieById(row.payload as ExcelData));
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    // await Promise.all(
+    //   currentFile.data.map(async (movie) => {
+    //     try {
+    //       const tmdbRowPromise = dispatch(fetchTmdbId(movie));
+    //       const tmdbRow: any = await Promise.race([
+    //         tmdbRowPromise,
+    //         timeout(10000),
+    //       ]);
+
+    //       console.log(tmdbRow);
+
+    //       // const rowPromise = dispatch(
+    //       //   fetchDirectorById(tmdbRow.payload as ExcelData)
+    //       // );
+
+    //       // const row: any = await Promise.race([rowPromise, timeout(15)]);
+
+    //       // dispatch(updatePersonsById(row.payload as ExcelData));
+    //       // return row;
+    //     } catch (error) {
+    //       console.error(error);
+    //       return movie;
+    //     }
+    //   })
+    // );
 
     if (!currentFile.tmdb_requested) dispatch(requestTmdb(currentFile.index));
 
