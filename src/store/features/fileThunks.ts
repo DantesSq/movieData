@@ -139,7 +139,7 @@ export const fetchMetadataById = createAsyncThunk(
 
       const response = await axios(options);
 
-      if (type?.toLowerCase() === "series" || spi_code?.startsWith("SPY")) {
+      if (movieType === "tv") {
         const data: tmdbSeriesDetails = response.data;
         if (!title) movie.title = data.name;
         if (!type) movie.type = "Series";

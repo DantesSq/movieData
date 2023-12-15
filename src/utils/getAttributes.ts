@@ -104,6 +104,7 @@ export const getIndependent = (tmdb_companies: string | undefined) => {
     "telewizja polska",
     "20th television",
     "warner bros",
+    "bbc",
   ];
 
   if (!tmdb_companies) return "";

@@ -60,7 +60,7 @@ const Main = ({ children }: any) => {
     }
   };
 
-  const dataTemplate = [
+  const dataTemplate: any = [
     {
       spi_code: "",
       title: "",
@@ -84,9 +84,14 @@ const Main = ({ children }: any) => {
             <div
               className="hover:cursor-pointer flex items-center group"
               onClick={() => {
-                if (!currentFile) return;
-                // writeFile({ name: "app template.xlsx", data: dataTemplate });
-                writeFile(currentFile);
+                // if (!currentFile) return;
+                writeFile({
+                  name: "app template.xlsx",
+                  data: dataTemplate,
+                  index: 777,
+                  tmdb_requested: true,
+                });
+                // writeFile(currentFile);
               }}
             >
               <svg
