@@ -34,10 +34,12 @@ export const divideIntoSeries = (data: ExcelData[]) => {
     const episode = data[index];
     console.log(episode);
     if (
-      !episode.spi_code?.startsWith("SPY") ||
+      !episode.spi_code?.startsWith("SPY") &&
       episode.type?.toLowerCase() !== "series"
-    )
+    ) {
+      console.log("You messed up here");
       continue;
+    }
 
     let episodeSeason = episode.spi_code?.slice(10, 12);
     if (episodeSeason === "00") episodeSeason = "01";

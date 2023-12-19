@@ -27,22 +27,26 @@ const RequestButtonNew: React.FC<RequestButtonNewProps> = ({
     dispatch(setIsProcessing(true));
 
     for (let index = 0; index < currentFile.data.length; index++) {
+      // debugger;
       let movie = currentFile.data[index];
-
       try {
         if (!currentFile.tmdb_requested) {
           const tmdbRow = await dispatch(fetchTmdbId(movie));
           movie = tmdbRow.payload as ExcelData;
         }
-        const row = await dispatch(
+        // console.log(options ? "YES" : "NO");
+        let row = await dispatch(
           requestFunction(options ? { movie, options } : movie)
         );
+        options
+          ? (row = await dispatch(requestFunction({ movie, options })))
+          : (row = await dispatch(requestFunction(movie)));
 
-        console.log(row.payload, " here");
+        // console.log(row.payload, " here");
 
         dispatch(updateMovieById(row.payload as ExcelData));
       } catch (error) {
-        console.error(error);
+        // console.error(error);
       }
     }
 

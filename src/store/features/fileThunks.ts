@@ -16,17 +16,19 @@ export const fetchDirectorById = createAsyncThunk(
   "files/fetchDirectorById",
   async (movie: ExcelData, { getState }) => {
     const { spi_code, type, tmdb_id, title } = movie;
-
+    // console.log("fetchDirector", movie);
+    // debugger;
     if (!tmdb_id) return movie;
 
     let urlType;
     if (type?.toLowerCase() === `series` || spi_code?.startsWith(`SPY`)) {
       urlType = "tv";
-      movie.type = "Series";
+      // movie.type = "Series";
     } else {
       urlType = "movie";
-      movie.type = "Movie";
+      // movie.type = "Movie";
     }
+    console.log("options");
 
     const options = {
       method: "GET",
@@ -38,8 +40,11 @@ export const fetchDirectorById = createAsyncThunk(
       },
     };
 
+    console.log("options");
+
     try {
       const response = await axios(options);
+
       const data: { crew: Person[]; cast: Person[]; id: number } =
         response.data;
 
@@ -51,6 +56,7 @@ export const fetchDirectorById = createAsyncThunk(
 
       return { ...movie, director: directors_names, cast: cast_names };
     } catch (error) {
+      console.error(error, "SUKA ERROR");
       return movie;
     }
   }

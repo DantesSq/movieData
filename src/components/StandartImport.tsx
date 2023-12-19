@@ -13,6 +13,8 @@ const StandartImport = () => {
       const data = currentFile.data;
 
       const importDataSeries = divideIntoSeries(data);
+
+      console.log("HERE", importDataSeries);
       setImportDataSeries(importDataSeries);
     }
   }, []);

@@ -229,6 +229,14 @@ const DataManipulating = () => {
             <Translations setOpenTranslations={setOpenTranslations} />
           </div>
         </div>
+
+        {/* <div>
+          <RequestButton
+            text="ALALALALA"
+            setCurrentIndex={setCurrentIndex}
+            requestFunction={throttleRequestSeries}
+          />
+        </div> */}
         {/* Series Data */}
         {/* <RequestButton
           text="Get Series Episodes Data"
